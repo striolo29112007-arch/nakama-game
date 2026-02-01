@@ -10,19 +10,17 @@ app.use(express.static(__dirname));
 const sql = neon(process.env.DATABASE_URL);
 
 app.post('/api', async (req, res) => {
-    let { action, room, player, target, customWord } = req.body;
+    let { action, room, player, target, customWord, gameMode } = req.body; // Añadido gameMode
     
     if(room) room = room.trim().toUpperCase();
     if(player) player = player.trim().toUpperCase();
 
     try {
-        // --- LISTAR ---
         if (action === 'list') {
             const rooms = await sql`SELECT room_code, COUNT(*) as count, MAX(created_at) as created_at FROM rooms GROUP BY room_code ORDER BY created_at DESC LIMIT 10`;
             return res.json(rooms);
         }
 
-        // --- JOIN ---
         if (action === 'join') {
             const existing = await sql`SELECT * FROM rooms WHERE room_code = ${room}`;
             let isStale = false;
@@ -46,7 +44,6 @@ app.post('/api', async (req, res) => {
             return res.json({ msg: "Ok" });
         }
 
-        // --- KICK (Singular) ---
         if (action === 'kick') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             const isAdmin = player === 'STRIOLO'; 
@@ -63,7 +60,6 @@ app.post('/api', async (req, res) => {
             }
         }
 
-        // --- CLEAN (Nuclear) ---
         if (action === 'clean') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             const isAdmin = player === 'STRIOLO'; 
@@ -75,7 +71,6 @@ app.post('/api', async (req, res) => {
             }
         }
 
-        // --- GET STATE ---
         if (action === 'get') {
             const players = await sql`SELECT player_name, is_leader FROM rooms WHERE room_code = ${room}`;
             if (players.length === 0) return res.json({ restart: true });
@@ -102,59 +97,59 @@ app.post('/api', async (req, res) => {
             });
         }
 
-        // --- START ---
+        // --- START CON MODOS ---
         if (action === 'start') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             if (check.length > 0 && check[0].is_leader) {
+                // Estructura de la semilla: RANDOM | PALABRA | MODO | EVENTO
                 let finalSeed = Math.random().toString(36).substring(7);
+                
+                // 1. Palabra
                 if (customWord && customWord.trim().length > 0) finalSeed += "|" + customWord.trim().toUpperCase();
                 else finalSeed += "|NONE";
 
-                if (Math.random() < 0.10) finalSeed += "|EVENT_ROOM"; 
-                else finalSeed += "|NO_EVENT";
+                // 2. Modo (CLASSIC, AKUMA, REVERSE)
+                const selectedMode = gameMode || "CLASSIC";
+                finalSeed += "|" + selectedMode;
+
+                // 3. Evento (Solo si es modo AKUMA)
+                if (selectedMode === "AKUMA" && Math.random() < 0.15) {
+                     finalSeed += "|EVENT_ROOM"; 
+                } else {
+                     finalSeed += "|NO_EVENT";
+                }
 
                 await sql`UPDATE room_status SET started = TRUE, game_seed = ${finalSeed} WHERE room_code = ${room}`;
                 return res.json({ msg: "Started" });
             }
         }
 
-        // --- VOTE (CON RULETA/DESEMPATE) ---
         if (action === 'vote') {
             await sql`INSERT INTO votes (room_code, voter, target) VALUES (${room}, ${player}, ${target}) ON CONFLICT (room_code, voter) DO UPDATE SET target = ${target}`;
-            
             const totalPlayers = await sql`SELECT COUNT(*) FROM rooms WHERE room_code = ${room}`;
             const totalVotes = await sql`SELECT COUNT(*) FROM votes WHERE room_code = ${room}`;
             
-            // Si todos han votado, decidimos
             if (parseInt(totalVotes[0].count) >= parseInt(totalPlayers[0].count)) {
                 const results = await sql`SELECT target, COUNT(*) as count FROM votes WHERE room_code = ${room} GROUP BY target ORDER BY count DESC`;
-                
-                let ejected = null;
+                let ejected = 'SKIP'; // Empate por defecto
                 
                 if (results.length > 0) {
-                    // Buscamos quién tiene el máximo de votos
                     const maxVotes = parseInt(results[0].count);
-                    // Filtramos todos los que tienen esos mismos votos (los empatados)
                     const ties = results.filter(r => parseInt(r.count) === maxVotes);
                     
                     if (ties.length === 1) {
-                        // Victoria clara
                         ejected = ties[0].target;
                     } else {
-                        // EMPATE: El servidor elige uno al azar (Ruleta Invisible)
+                        // Ruleta del servidor para desempatar
                         const randomLoser = ties[Math.floor(Math.random() * ties.length)];
                         ejected = randomLoser.target;
                     }
                 }
-
-                if (ejected) {
-                    await sql`UPDATE room_status SET ejected_player = ${ejected} WHERE room_code = ${room}`;
-                }
+                await sql`UPDATE room_status SET ejected_player = ${ejected} WHERE room_code = ${room}`;
             }
             return res.json({ msg: "Voted" });
         }
 
-        // --- RESET ---
         if (action === 'reset') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             if (check.length > 0 && check[0].is_leader) {
@@ -164,7 +159,6 @@ app.post('/api', async (req, res) => {
                 return res.json({ msg: "Reset" });
             }
         }
-
     } catch (error) { res.status(500).send(String(error)); }
 });
 
