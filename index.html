@@ -46,7 +46,7 @@
             position: relative; overflow: hidden; 
             transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); /* Giro muy suave */
         }
-        /* Textos dentro de la rueda */
+        /* Textos dentro de la rueda (CORREGIDO) */
         .wheel-text {
             position: absolute; top: 50%; left: 50%;
             transform-origin: center; /* Gira sobre su propio centro */
@@ -589,6 +589,7 @@
             const gameMode = seedParts[2] || 'CLASSIC';
             const sorted = [...jugadores].sort();
             const roleExpulsado = rolesPartida[sorted.indexOf(expulsado)];
+            const soyImpostor = (miRol === "___IMPOSTOR___");
             
             let haGanadoTripulacion = false;
             if (gameMode === 'REVERSE') {
@@ -600,16 +601,31 @@
             const icon=document.getElementById('modalIcon'), title=document.getElementById('modalTitle'), desc=document.getElementById('modalDesc');
             document.getElementById('modalImageContainer').innerHTML = '';
             
-            let htmlDesc = "";
+            // LÓGICA DE MENSAJE PERSONALIZADO
             if (haGanadoTripulacion) {
-                icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
-                htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> ha sido eliminado correctamente.`;
+                // TRIPULACIÓN GANA
+                if (soyImpostor) {
+                    // Soy el malo y han ganado los buenos -> PERDÍ
+                    icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
+                    desc.innerHTML = `Te han descubierto.<br>Has sido expulsado.`;
+                } else {
+                    // Soy bueno y han ganado los buenos -> GANÉ
+                    icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
+                    desc.innerHTML = `¡Bien hecho!<br>El Impostor <span style="color:var(--red); font-weight:bold;">${expulsado}</span> ha sido eliminado.`;
+                }
             } else {
-                icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
-                htmlDesc = `Habéis expulsado a un inocente: <span style="color:white; font-weight:bold;">${expulsado}</span>.`;
+                // IMPOSTOR GANA
+                if (soyImpostor) {
+                    // Soy el malo y han ganado los malos -> GANÉ
+                    icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
+                    desc.innerHTML = `¡Les has engañado!<br>Han expulsado a un inocente: ${expulsado}.`;
+                } else {
+                    // Soy bueno y han ganado los malos -> PERDÍ
+                    icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
+                    desc.innerHTML = `Os habéis equivocado...<br><span style="color:white; font-weight:bold;">${expulsado}</span> era inocente.`;
+                }
             }
 
-            desc.innerHTML = htmlDesc;
             let botonesHTML = `<button class="btn-photo" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="abrirFotoModal('${personajePartida}')">📷 VER PERSONAJE SECRETO</button>`;
             if(soyLider) botonesHTML += '<button class="btn-main" onclick="reiniciarPartida()">🔄 JUGAR OTRA VEZ</button>'; else botonesHTML += '<p style="font-size:0.8rem; color:#aaa;">Esperando al capitán para reiniciar...</p>';
             document.getElementById('modalButtons').innerHTML = botonesHTML; document.getElementById('modalOverlay').style.display = 'flex';
