@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { neon } = require('@neondatabase/serverless');
-const path = require('path');
 
 const app = express();
 app.use(express.json());
@@ -11,23 +10,21 @@ app.use(express.static(__dirname));
 const sql = neon(process.env.DATABASE_URL);
 
 app.post('/api', async (req, res) => {
-    let { action, room, player, target } = req.body;
+    let { action, room, player, target, customWord } = req.body;
     
     if(room) room = room.trim().toUpperCase();
     if(player) player = player.trim().toUpperCase();
 
     try {
-        // --- LISTAR SALAS ---
+        // --- LISTAR ---
         if (action === 'list') {
             const rooms = await sql`SELECT room_code, COUNT(*) as count, MAX(created_at) as created_at FROM rooms GROUP BY room_code ORDER BY created_at DESC LIMIT 10`;
             return res.json(rooms);
         }
 
-        // --- UNIRSE (CON RECONEXIÓN) ---
+        // --- JOIN ---
         if (action === 'join') {
             const existing = await sql`SELECT * FROM rooms WHERE room_code = ${room}`;
-            
-            // Limpiar salas viejas (30 min)
             let isStale = false;
             if (existing.length > 0) {
                 const diffMinutes = (new Date() - new Date(existing[0].created_at)) / 1000 / 60;
@@ -44,45 +41,33 @@ app.post('/api', async (req, res) => {
             } else {
                 const nameExists = existing.some(p => p.player_name === player);
                 if (nameExists) return res.json({ msg: "Reconnected" }); 
-                
                 await sql`INSERT INTO rooms (room_code, player_name, is_leader) VALUES (${room}, ${player}, FALSE)`;
             }
             return res.json({ msg: "Ok" });
         }
 
-        // --- ECHAR JUGADOR INDIVIDUAL (KICK) ---
+        // --- KICK (Singular) ---
         if (action === 'kick') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
-            const isRequesterLeader = check.length > 0 && check[0].is_leader;
             const isAdmin = player === 'STRIOLO'; 
-
-            if (isRequesterLeader || isAdmin) {
-                // Comprobamos si el expulsado era el líder
+            if ((check.length > 0 && check[0].is_leader) || isAdmin) {
                 const targetInfo = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${target}`;
-                
                 if (targetInfo.length > 0) {
                     await sql`DELETE FROM rooms WHERE room_code = ${room} AND player_name = ${target}`;
                     await sql`DELETE FROM votes WHERE room_code = ${room} AND voter = ${target}`;
-
-                    // Si echamos al líder, ascendemos al siguiente más antiguo
                     if (targetInfo[0].is_leader) {
-                        await sql`UPDATE rooms SET is_leader = TRUE WHERE ctid IN (
-                            SELECT ctid FROM rooms WHERE room_code = ${room} ORDER BY created_at ASC LIMIT 1
-                        )`;
+                        await sql`UPDATE rooms SET is_leader = TRUE WHERE ctid IN (SELECT ctid FROM rooms WHERE room_code = ${room} ORDER BY created_at ASC LIMIT 1)`;
                     }
                 }
                 return res.json({ msg: "Kicked" });
             }
         }
 
-        // --- LIMPIEZA TOTAL (NUCLEAR) ---
+        // --- CLEAN (Nuclear) ---
         if (action === 'clean') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
-            const isLeader = check.length > 0 && check[0].is_leader;
             const isAdmin = player === 'STRIOLO'; 
-
-            if (isLeader || isAdmin) {
-                // BORRAMOS TODO: Sala, jugadores y votos. Adiós.
+            if ((check.length > 0 && check[0].is_leader) || isAdmin) {
                 await sql`DELETE FROM rooms WHERE room_code = ${room}`;
                 await sql`DELETE FROM votes WHERE room_code = ${room}`;
                 await sql`DELETE FROM room_status WHERE room_code = ${room}`;
@@ -90,20 +75,20 @@ app.post('/api', async (req, res) => {
             }
         }
 
-        // --- LEER ESTADO ---
+        // --- GET STATE ---
         if (action === 'get') {
             const players = await sql`SELECT player_name, is_leader FROM rooms WHERE room_code = ${room}`;
             if (players.length === 0) return res.json({ restart: true });
 
             const amIHere = players.some(p => p.player_name === player);
-            if (!amIHere) return res.json({ restart: true }); // Si me han echado, reinicio
+            if (!amIHere) return res.json({ restart: true });
 
             const status = await sql`SELECT started, game_seed, ejected_player FROM room_status WHERE room_code = ${room}`;
             const myVote = await sql`SELECT target FROM votes WHERE room_code = ${room} AND voter = ${player}`;
             const votesRaw = await sql`SELECT target, COUNT(*) as c FROM votes WHERE room_code = ${room} GROUP BY target`;
             
             const voteCounts = {};
-            votesRaw.forEach(r => voteCounts[r.target] = r.c);
+            votesRaw.forEach(r => voteCounts[r.target] = parseInt(r.c));
             const leaderObj = players.find(p => p.is_leader);
 
             return res.json({ 
@@ -117,24 +102,59 @@ app.post('/api', async (req, res) => {
             });
         }
 
-        // --- RESTO DE ACCIONES (START, VOTE, RESET) ---
+        // --- START ---
         if (action === 'start') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             if (check.length > 0 && check[0].is_leader) {
-                await sql`UPDATE room_status SET started = TRUE WHERE room_code = ${room}`;
+                let finalSeed = Math.random().toString(36).substring(7);
+                if (customWord && customWord.trim().length > 0) finalSeed += "|" + customWord.trim().toUpperCase();
+                else finalSeed += "|NONE";
+
+                if (Math.random() < 0.10) finalSeed += "|EVENT_ROOM"; 
+                else finalSeed += "|NO_EVENT";
+
+                await sql`UPDATE room_status SET started = TRUE, game_seed = ${finalSeed} WHERE room_code = ${room}`;
                 return res.json({ msg: "Started" });
             }
         }
+
+        // --- VOTE (CON RULETA/DESEMPATE) ---
         if (action === 'vote') {
             await sql`INSERT INTO votes (room_code, voter, target) VALUES (${room}, ${player}, ${target}) ON CONFLICT (room_code, voter) DO UPDATE SET target = ${target}`;
+            
             const totalPlayers = await sql`SELECT COUNT(*) FROM rooms WHERE room_code = ${room}`;
             const totalVotes = await sql`SELECT COUNT(*) FROM votes WHERE room_code = ${room}`;
+            
+            // Si todos han votado, decidimos
             if (parseInt(totalVotes[0].count) >= parseInt(totalPlayers[0].count)) {
-                const results = await sql`SELECT target, COUNT(*) as count FROM votes WHERE room_code = ${room} GROUP BY target ORDER BY count DESC LIMIT 1`;
-                if (results.length > 0) await sql`UPDATE room_status SET ejected_player = ${results[0].target} WHERE room_code = ${room}`;
+                const results = await sql`SELECT target, COUNT(*) as count FROM votes WHERE room_code = ${room} GROUP BY target ORDER BY count DESC`;
+                
+                let ejected = null;
+                
+                if (results.length > 0) {
+                    // Buscamos quién tiene el máximo de votos
+                    const maxVotes = parseInt(results[0].count);
+                    // Filtramos todos los que tienen esos mismos votos (los empatados)
+                    const ties = results.filter(r => parseInt(r.count) === maxVotes);
+                    
+                    if (ties.length === 1) {
+                        // Victoria clara
+                        ejected = ties[0].target;
+                    } else {
+                        // EMPATE: El servidor elige uno al azar (Ruleta Invisible)
+                        const randomLoser = ties[Math.floor(Math.random() * ties.length)];
+                        ejected = randomLoser.target;
+                    }
+                }
+
+                if (ejected) {
+                    await sql`UPDATE room_status SET ejected_player = ${ejected} WHERE room_code = ${room}`;
+                }
             }
             return res.json({ msg: "Voted" });
         }
+
+        // --- RESET ---
         if (action === 'reset') {
             const check = await sql`SELECT is_leader FROM rooms WHERE room_code = ${room} AND player_name = ${player}`;
             if (check.length > 0 && check[0].is_leader) {
@@ -144,6 +164,7 @@ app.post('/api', async (req, res) => {
                 return res.json({ msg: "Reset" });
             }
         }
+
     } catch (error) { res.status(500).send(String(error)); }
 });
 
