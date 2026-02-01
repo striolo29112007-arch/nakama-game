@@ -25,15 +25,13 @@
         .roulette-title { color: var(--gold); font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; animation: blink 1s infinite; text-align: center; }
         .roulette-wheel { width: 300px; height: 300px; border-radius: 50%; border: 10px solid var(--gold); position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 0 50px rgba(241, 196, 15, 0.5); background: conic-gradient(from 0deg, #e74c3c 0%, #3498db 50%, #e74c3c 100%); display: flex; align-items: center; justify-content: center; }
         .roulette-arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 5001; filter: drop-shadow(0 5px 5px black); }
-        .roulette-center { width: 50px; height: 50px; background: white; border-radius: 50%; position: absolute; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .roulette-names { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 1.2rem; color: white; display: flex; justify-content: center; align-items: center; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* RESTO CSS */
+        /* HEADER & CONTAINER */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 20px; animation: float 6s ease-in-out infinite; }
         .header-logo { max-width: 280px; width: 80%; height: auto; display: block; margin: 0 auto 5px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
         .container { width: 100%; max-width: 400px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s; }
         
         @media (min-width: 768px) { #setupScreen.container { max-width: 800px; flex-direction: row; align-items: flex-start; } .setup-left { flex: 1; min-width: 300px; } .setup-right { flex: 1; border-left: 1px solid var(--border); padding-left: 20px; min-height: 250px; } }
@@ -42,9 +40,9 @@
         #gameScreen, #votingScreen, #lobbyScreen { display: none; }
 
         input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; }
-        input:focus { border-color: var(--red); } input.error { border-color: var(--red); animation: shake 0.5s; } input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
-
+        input:focus, select:focus { border-color: var(--red); } 
+        input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
+        
         .user-saved-box { display: none; align-items: center; justify-content: space-between; background: #1e272e; padding: 15px; border-radius: 12px; border: 1px solid var(--blue); }
         .user-saved-name { font-size: 1.2rem; font-weight: 900; color: white; }
         .btn-settings { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0 10px; color: var(--text-muted); transition: 0.2s; box-shadow: none; width: auto; }
@@ -110,8 +108,7 @@
         <div class="roulette-title">¡EMPATE! 🎲</div>
         <div style="position:relative;">
             <div class="roulette-arrow"></div>
-            <div class="roulette-wheel" id="rouletteWheel">
-                </div>
+            <div class="roulette-wheel" id="rouletteWheel"></div>
         </div>
         <p style="color:#aaa; margin-top:20px;">La suerte decide quién cae al mar...</p>
     </div>
@@ -152,12 +149,20 @@
         <div style="text-align:center; color:#aaa; font-size:0.8rem; margin-bottom:15px;">Esperando a la tripulación...</div>
         <ul id="onlinePlayerList" class="player-list"></ul>
         <div style="text-align:center; margin-top:10px; color:var(--text-muted);"><span id="onlineCount">0</span> Nakamas conectados</div>
-        <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:bold; margin-top:5px; font-size:0.9rem;">⚠️ HABRÁ 1 IMPOSTOR</div>
         
-        <div id="customWordSection" style="margin-top:15px; display:none;">
+        <div id="adminSection" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:10px;">
+            <label style="color:var(--blue);">MODO DE JUEGO:</label>
+            <select id="gameModeSelect" style="margin-bottom:10px;">
+                <option value="CLASSIC">⚓ CLÁSICO</option>
+                <option value="AKUMA">🍇 AKUMA NO MI (EVENTOS)</option>
+                <option value="REVERSE">👺 TODOS CONTRA UNO</option>
+            </select>
+
             <label>PALABRA SECRETA (OPCIONAL)</label>
             <input type="text" id="customWordInput" placeholder="EJ: MINECRAFT" style="border-color:var(--blue);">
         </div>
+
+        <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:bold; margin-top:15px; font-size:0.9rem;">⚠️ HABRÁ 1 IMPOSTOR</div>
 
         <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px;" onclick="comenzarPartida()">ESPERANDO AL CAPITÁN... ⏳</button>
         <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ ELIMINAR SALA (BORRAR TODO)</button>
@@ -315,17 +320,14 @@
         }
 
         function gestionarResultado(data) {
-            // DETECTAR EMPATE PARA RULETA
             const votes = data.votes || {};
             let maxV = 0; Object.values(votes).forEach(v => { if(v > maxV) maxV = v; });
             const tied = Object.keys(votes).filter(k => votes[k] === maxV);
 
             if (tied.length > 1 && !roulettePlayed) {
-                // Hay empate y aun no hemos jugado la ruleta
-                roulettePlayed = true; // Evitar que se repita
+                roulettePlayed = true; 
                 jugarRuleta(tied, data.ejected);
             } else if (tied.length === 1 || roulettePlayed) {
-                // Victoria normal o ruleta ya jugada
                 mostrarResultadoVotacion(data.ejected);
             }
         }
@@ -335,7 +337,6 @@
             const wheel = document.getElementById('rouletteWheel');
             screen.style.display = 'flex';
             
-            // Generar gajos de la ruleta (visual)
             let gradientStr = "conic-gradient(";
             const colors = ["#e74c3c", "#3498db", "#f1c40f", "#9b59b6", "#2ecc71"];
             const step = 360 / candidatos.length;
@@ -344,10 +345,8 @@
             });
             gradientStr += ")";
             wheel.style.background = gradientStr;
-            wheel.innerHTML = `<div class="roulette-names" style="transform: rotate(0deg)">${candidatos.join(" vs ")}</div>`; // Simplificado
+            wheel.innerHTML = `<div class="roulette-names" style="transform: rotate(0deg)">${candidatos.join(" vs ")}</div>`;
 
-            // Calcular rotación para caer en el perdedorReal (aproximado visual)
-            // En realidad, haremos girar y al final mostramos el nombre
             setTimeout(() => {
                 const rotation = 3600 + Math.random() * 360; 
                 wheel.style.transform = `rotate(${rotation}deg)`;
@@ -384,15 +383,15 @@
             
             const btnZarpar = document.getElementById('btnZarpar');
             const btnClean = document.getElementById('btnClean');
-            const customInput = document.getElementById('customWordSection');
+            const adminSec = document.getElementById('adminSection');
             
             if (soyLider || miNombre === "STRIOLO") btnClean.style.display = 'block'; else btnClean.style.display = 'none';
             if (soyLider) { 
                 btnZarpar.innerText = "ZARPAR TODOS ⚓"; btnZarpar.classList.remove('disabled'); 
-                customInput.style.display = 'block';
+                adminSec.style.display = 'block';
             } else { 
                 btnZarpar.innerText = "ESPERANDO AL CAPITÁN... ⏳"; btnZarpar.classList.add('disabled'); 
-                customInput.style.display = 'none';
+                adminSec.style.display = 'none';
             }
         }
 
@@ -400,7 +399,8 @@
             if(!soyLider) return;
             if(jugadores.length < 3) { showToast("Mínimo 3 jugadores"); return; }
             const custom = document.getElementById('customWordInput').value;
-            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, customWord: custom }) }); } catch(e) {}
+            const mode = document.getElementById('gameModeSelect').value;
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, customWord: custom, gameMode: mode }) }); } catch(e) {}
         }
 
         async function reiniciarPartida() { try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); } catch(e) {} }
@@ -409,62 +409,61 @@
 
         function iniciarJuegoCliente() {
             jugadores.sort(); 
-            // PARSEAR SEMILLA PARA EXTRAS (Evento | Palabra)
+            // SEMILLA: RANDOM | PALABRA | MODO | EVENTO
             const seedParts = gameSeed.split('|');
             const baseSeed = seedParts[0] || gameSeed;
-            const customWord = seedParts[1] !== 'NONE' ? seedParts[1] : null;
-            const eventType = seedParts[2] || 'NO_EVENT';
+            const customWord = (seedParts[1] && seedParts[1] !== 'NONE') ? seedParts[1] : null;
+            const gameMode = seedParts[2] || 'CLASSIC';
+            const eventType = seedParts[3] || 'NO_EVENT';
 
             const seed = cyrb128(seedActual + baseSeed);
             const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
             
-            // ELECCION DE PALABRA
-            if (customWord) {
-                personajePartida = customWord;
+            if (customWord) personajePartida = customWord;
+            else personajePartida = personajes[Math.floor(rand() * personajes.length)];
+
+            // ASIGNAR ROLES SEGÚN MODO
+            const numImpostores = jugadores.length >= 8 ? 2 : 1;
+            let roles = [];
+
+            if (gameMode === 'REVERSE') {
+                // MODO TODOS VS UNO: Todos son "Impostores" (no saben), Uno es "Detective" (sabe)
+                roles = Array(jugadores.length - 1).fill("___IMPOSTOR___");
+                roles.push(personajePartida); // El rol "bueno" aquí es saber la palabra
             } else {
-                personajePartida = personajes[Math.floor(rand() * personajes.length)];
+                // MODO CLASICO / AKUMA
+                roles = Array(jugadores.length - numImpostores).fill(personajePartida);
+                for(let k=0; k<numImpostores; k++) roles.push("___IMPOSTOR___");
             }
 
-            // ROLES
-            const numImpostores = jugadores.length >= 8 ? 2 : 1;
-            let roles = Array(jugadores.length - numImpostores).fill(personajePartida);
-            for(let k=0; k<numImpostores; k++) roles.push("___IMPOSTOR___");
+            // BARAJAR
             for(let i=roles.length-1; i>0; i--){const j=Math.floor(rand()*(i+1));[roles[i],roles[j]]=[roles[j],roles[i]];}
             rolesPartida = roles;
             const miIndice = jugadores.indexOf(miNombre);
             miRol = (miIndice !== -1) ? roles[miIndice] : "ERROR";
 
-            // EVENTO?
+            // EVENTOS (SOLO VISUAL)
             const eventBox = document.getElementById('eventDisplay');
-            if (eventType === 'EVENT_ROOM') {
-                eventBox.innerHTML = "😈 <b>ROOM DE LAW:</b><br>¡Los roles se han barajado en secreto!";
+            if (eventType === 'EVENT_ROOM' && gameMode === 'AKUMA') {
+                eventBox.innerHTML = "😈 <b>ROOM DE LAW:</b><br>¡Los roles han sido barajados en secreto!";
                 eventBox.style.display = 'block';
-                // (Logica visual, en realidad los roles ya se asignaron barajados arriba, esto es puro lore)
             } else {
                 eventBox.style.display = 'none';
             }
 
             document.getElementById('lobbyScreen').style.display = 'none'; document.getElementById('mainHeader').style.display = 'none'; document.getElementById('gameScreen').style.display = 'flex'; document.getElementById('roomInfo').innerText = `SALA: ${seedActual}`; document.getElementById('cardNameDisplay').innerText = miNombre; resetCardVisual();
-            
-            // INICIAR TIMER
             iniciarTimer();
         }
 
         function iniciarTimer() {
             if (timerInterval) clearInterval(timerInterval);
-            let timeLeft = 180; // 3 minutos
+            let timeLeft = 180; 
             const timerEl = document.getElementById('gameTimer');
             timerInterval = setInterval(() => {
                 timeLeft--;
-                const m = Math.floor(timeLeft / 60);
-                const s = timeLeft % 60;
+                const m = Math.floor(timeLeft / 60); const s = timeLeft % 60;
                 timerEl.innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    timerEl.innerText = "¡A VOTAR!";
-                    timerEl.style.color = "var(--red)";
-                    navigator.vibrate([200, 100, 200]);
-                }
+                if (timeLeft <= 0) { clearInterval(timerInterval); timerEl.innerText = "¡A VOTAR!"; timerEl.style.color = "var(--red)"; navigator.vibrate([200, 100, 200]); }
             }, 1000);
         }
 
@@ -475,13 +474,31 @@
             const imgContainer = document.getElementById('modalImageContainer'); imgContainer.innerHTML = '';
             document.getElementById('modalButtons').innerHTML = '<button class="btn-close" onclick="closeModal()">ENTENDIDO</button>';
 
-            if(miRol === "___IMPOSTOR___") {
-                icon.innerText="🤫"; title.innerText="IMPOSTOR"; title.className="role-title impostor";
-                desc.innerHTML="No tienes personaje.<br>Escucha, deduce y miente.";
+            // Lógica visual para REVERSE (Todos contra Uno)
+            // Si miRol es la palabra secreta -> Soy el ÚNICO que sabe (Detective)
+            // Si miRol es ___IMPOSTOR___ -> No sé nada (La turba)
+            const seedParts = gameSeed.split('|');
+            const gameMode = seedParts[2] || 'CLASSIC';
+
+            if (gameMode === 'REVERSE') {
+                if (miRol === "___IMPOSTOR___") {
+                    icon.innerText="🤷‍♂️"; title.innerText="DESPISTADO"; title.className="role-title impostor";
+                    desc.innerHTML="No sabes la palabra.<br>Finge que sabes y encuentra al que realmente sabe.";
+                } else {
+                    icon.innerText="🕵️‍♂️"; title.innerText="SABIO SOLITARIO"; title.className="role-title crew";
+                    desc.innerHTML=`Eres el único que lo sabe.<br>La palabra es: <span style="color:var(--gold); font-size:1.5rem; display:block; margin-top:5px;">${personajePartida}</span>`;
+                    imgContainer.innerHTML = `<button class="btn-photo" onclick="abrirFotoModal('${personajePartida}')">📷 VER FOTO</button>`;
+                }
             } else {
-                icon.innerText="⚓"; title.innerText="NAKAMA"; title.className="role-title crew";
-                desc.innerHTML=`Tu personaje secreto es:<br><span style="color:var(--gold); font-size:1.5rem; display:block; margin-top:5px;">${personajePartida}</span>`;
-                imgContainer.innerHTML = `<button class="btn-photo" onclick="abrirFotoModal('${personajePartida}')">📷 VER FOTO</button>`;
+                // CLASICO / AKUMA
+                if (miRol === "___IMPOSTOR___") {
+                    icon.innerText="🤫"; title.innerText="IMPOSTOR"; title.className="role-title impostor";
+                    desc.innerHTML="No tienes personaje.<br>Escucha, deduce y miente.";
+                } else {
+                    icon.innerText="⚓"; title.innerText="NAKAMA"; title.className="role-title crew";
+                    desc.innerHTML=`Tu personaje secreto es:<br><span style="color:var(--gold); font-size:1.5rem; display:block; margin-top:5px;">${personajePartida}</span>`;
+                    imgContainer.innerHTML = `<button class="btn-photo" onclick="abrirFotoModal('${personajePartida}')">📷 VER FOTO</button>`;
+                }
             }
             document.getElementById('modalOverlay').style.display = 'flex';
         }
@@ -506,24 +523,42 @@
         function mostrarResultadoVotacion(expulsado) {
             if(document.getElementById('modalOverlay').style.display === 'flex' && document.getElementById('modalTitle').className.includes('win')) return;
             
+            const seedParts = gameSeed.split('|');
+            const gameMode = seedParts[2] || 'CLASSIC';
             const sorted = [...jugadores].sort();
-            const roleVoted = rolesPartida[sorted.indexOf(expulsado)] === "___IMPOSTOR___";
+            
+            // ¿Quién era el "malo"?
+            // En CLASICO/AKUMA: El malo es ___IMPOSTOR___
+            // En REVERSE: El "malo" (objetivo) es el que SABE la palabra
+            const roleExpulsado = rolesPartida[sorted.indexOf(expulsado)];
             const soyImpostor = (miRol === "___IMPOSTOR___");
+            
+            let haGanadoTripulacion = false; // "Tripulación" son los buenos (mayoría)
+
+            if (gameMode === 'REVERSE') {
+                // Ganan los despistados (mayoría) si echan al Sabio (palabra)
+                if (roleExpulsado !== "___IMPOSTOR___") haGanadoTripulacion = true;
+            } else {
+                // Ganan los Nakamas (mayoría) si echan al Impostor
+                if (roleExpulsado === "___IMPOSTOR___") haGanadoTripulacion = true;
+            }
+
             const icon=document.getElementById('modalIcon'), title=document.getElementById('modalTitle'), desc=document.getElementById('modalDesc');
             document.getElementById('modalImageContainer').innerHTML = '';
             
             let htmlDesc = "";
-            if (roleVoted) {
-                if (soyImpostor) { icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor"; htmlDesc = `Te han descubierto.<br>Has sido expulsado.`; } 
-                else { icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win"; htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> era el Impostor.<br>¡Buen trabajo Nakamas!`; }
+            
+            // LÓGICA DE MENSAJE FINAL
+            if (haGanadoTripulacion) {
+                // GANARON LOS BUENOS (MAYORÍA)
+                icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
+                htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> ha sido eliminado correctamente.`;
             } else {
-                if (soyImpostor) { icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win"; htmlDesc = `¡Has conseguido engañarlos a todos!<br>Han expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.`; } 
-                else { 
-                    icon.innerText="💀"; title.innerText="HEMOS PERDIDO"; title.className="role-title impostor"; htmlDesc = `Habéis expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.<br>Era inocente.`; 
-                    const impostores = jugadores.filter((_, i) => rolesPartida[i] === "___IMPOSTOR___");
-                    htmlDesc += `<br><br>Impostor(es): <span style="color:var(--red); font-weight:bold;">${impostores.join(", ")}</span>`;
-                }
+                // GANARON LOS MALOS (MINORÍA/IMPOSTOR)
+                icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
+                htmlDesc = `Habéis expulsado a un inocente: <span style="color:white; font-weight:bold;">${expulsado}</span>.`;
             }
+
             desc.innerHTML = htmlDesc;
             let botonesHTML = `<button class="btn-photo" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="abrirFotoModal('${personajePartida}')">📷 VER PERSONAJE SECRETO</button>`;
             if(soyLider) botonesHTML += '<button class="btn-main" onclick="reiniciarPartida()">🔄 JUGAR OTRA VEZ</button>'; else botonesHTML += '<p style="font-size:0.8rem; color:#aaa;">Esperando al capitán para reiniciar...</p>';
