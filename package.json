@@ -1,7 +1,14 @@
 {
-  "name": "nakama-sync",
+  "name": "nakama-server",
   "version": "1.0.0",
+  "description": "Servidor para Nakama Sync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "@netlify/neon": "^0.1.0"
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "@neondatabase/serverless": "^0.6.0"
   }
 }
