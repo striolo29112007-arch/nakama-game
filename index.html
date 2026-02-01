@@ -249,7 +249,8 @@
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display === 'none') return;
             try {
-                const res = await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'list' }) });
+                // FIXED: URL cambiada a /api para Render
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
                 if(res.ok) {
                     const rooms = await res.json();
                     const container = document.getElementById('activeRooms');
@@ -300,7 +301,8 @@
             
             partidaIniciadaLocal = false; heVotado = false;
             try {
-                const res = await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'join', room: seedActual, player: miNombre }) });
+                // FIXED: URL cambiada a /api para Render
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'join', room: seedActual, player: miNombre }) });
                 if(res.ok) {
                     localStorage.setItem('nakama_name', miNombre); // GUARDAR NOMBRE AL ENTRAR CON ÉXITO
                     irALobby(); 
@@ -326,7 +328,8 @@
 
         async function actualizarLista() {
             try {
-                const res = await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'get', room: seedActual, player: miNombre }) });
+                // FIXED: URL cambiada a /api para Render
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'get', room: seedActual, player: miNombre }) });
                 if(res.ok) {
                     const data = await res.json();
                     if(data.restart) { location.reload(); return; }
@@ -405,16 +408,16 @@
         async function comenzarPartida() {
             if(!soyLider) return;
             if(jugadores.length < 3) { showToast("Mínimo 3 jugadores"); return; }
-            try { await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre }) }); } catch(e) {}
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre }) }); } catch(e) {}
         }
 
         async function reiniciarPartida() {
-            try { await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); } catch(e) {}
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); } catch(e) {}
         }
 
         async function limpiarSala() {
             if(!confirm("¿Seguro que quieres echar a todos los demás?")) return;
-            try { await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); } catch(e) {}
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); } catch(e) {}
         }
 
         function iniciarJuegoCliente() {
@@ -481,7 +484,8 @@
             btnElement.style.opacity = '1';
             btnElement.style.borderColor = 'var(--gold)';
             try {
-                await fetch('/.netlify/functions/api', { method: 'POST', body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: target }) });
+                // FIXED: URL cambiada a /api para Render
+                await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: target }) });
                 heVotado = true;
                 document.getElementById('votingStatus').innerText = "VOTO ENVIADO. ESPERANDO AL RESTO...";
             } catch(e) { showToast("Error al votar"); }
