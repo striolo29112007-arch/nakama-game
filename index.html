@@ -20,42 +20,75 @@
         @keyframes pulseGlow { 0% { opacity: 0; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; transform: scale(1); } }
         .intro-fade-out { opacity: 0 !important; visibility: hidden; transform: scale(1.1); filter: blur(10px); }
 
-        /* RULETA */
-        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .roulette-title { color: var(--gold); font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; animation: blink 1s infinite; text-align: center; }
-        .roulette-wheel { width: 300px; height: 300px; border-radius: 50%; border: 10px solid var(--gold); position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 0 50px rgba(241, 196, 15, 0.5); background: conic-gradient(from 0deg, #e74c3c 0%, #3498db 50%, #e74c3c 100%); display: flex; align-items: center; justify-content: center; }
-        .roulette-arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 5001; filter: drop-shadow(0 5px 5px black); }
-        .roulette-names { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 1.2rem; color: white; display: flex; justify-content: center; align-items: center; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        /* RULETA PRO */
+        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 32, 39, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .roulette-title { color: var(--gold); font-size: 2.5rem; margin-bottom: 20px; text-transform: uppercase; font-weight: 900; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+        .roulette-container { position: relative; width: 320px; height: 320px; display: flex; justify-content: center; align-items: center; }
+        
+        /* La Rueda */
+        .roulette-wheel { 
+            width: 100%; height: 100%; 
+            border-radius: 50%; 
+            border: 8px solid #5a4033; /* Color madera oscura */
+            box-shadow: 0 0 0 4px var(--gold), 0 0 30px rgba(0,0,0,0.8); /* Doble borde: Madera + Oro */
+            position: relative; 
+            overflow: hidden; 
+            transition: transform 5s cubic-bezier(0.1, 0, 0.2, 1); /* Transición suave de giro */
+        }
+        
+        /* Centro de la rueda */
+        .roulette-hub {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: #fff; border: 4px solid var(--gold);
+            border-radius: 50%; z-index: 10;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
 
-        /* HEADER & CONTAINER */
+        /* Texto de los nombres */
+        .wheel-text {
+            position: absolute; top: 50%; left: 50%;
+            transform-origin: 0 0;
+            width: 50%; height: 2px; /* Linea invisible desde el centro */
+            text-align: right;
+            padding-right: 20px; /* Separación del borde */
+            color: white; font-weight: 900; font-size: 1.1rem; text-shadow: 1px 1px 2px black;
+            z-index: 5;
+            display: flex; justify-content: flex-end; align-items: center;
+        }
+        .wheel-text span { display: inline-block; transform: rotate(90deg); /* El texto mira hacia el centro o borde */ }
+
+        /* El Puntero (Hueso / Flecha) */
+        .roulette-pointer {
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+            z-index: 20; width: 40px; height: 50px;
+            background: #ecf0f1;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 50% 100%, 0% 20%);
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5));
+            border-top: 5px solid var(--red);
+        }
+
+        /* RESTO CSS */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 20px; animation: float 6s ease-in-out infinite; }
         .header-logo { max-width: 280px; width: 80%; height: auto; display: block; margin: 0 auto 5px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .container { width: 100%; max-width: 400px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s; }
-        
         @media (min-width: 768px) { #setupScreen.container { max-width: 800px; flex-direction: row; align-items: flex-start; } .setup-left { flex: 1; min-width: 300px; } .setup-right { flex: 1; border-left: 1px solid var(--border); padding-left: 20px; min-height: 250px; } }
         @media (max-width: 767px) { .setup-right { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #gameScreen, #votingScreen, #lobbyScreen { display: none; }
-
         input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; }
-        input:focus, select:focus { border-color: var(--red); } 
-        input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
-        
+        input:focus, select:focus { border-color: var(--red); } input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
         .user-saved-box { display: none; align-items: center; justify-content: space-between; background: #1e272e; padding: 15px; border-radius: 12px; border: 1px solid var(--blue); }
         .user-saved-name { font-size: 1.2rem; font-weight: 900; color: white; }
         .btn-settings { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0 10px; color: var(--text-muted); transition: 0.2s; box-shadow: none; width: auto; }
         .btn-settings:hover { color: var(--gold); transform: rotate(45deg); }
-
         button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
         button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); } button.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .btn-main { background: var(--red); color: white; } .btn-blue { background: var(--blue); color: white; margin-top: 10px; } .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; } .btn-photo { background: #0b1015; color: var(--gold); border: 1px solid var(--gold); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; } .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; } .btn-kick { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; padding: 0 5px; margin-left: 10px; box-shadow: none; width: auto; } .btn-kick:hover { transform: scale(1.2); }
-        
         .player-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; background: #0b1015; border-radius: 10px; border: 1px solid var(--border); }
         .player-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
         .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px #2ecc71; }
-
         .room-list-box { margin-top: 10px; max-height: 200px; overflow-y: auto; }
         .room-item { background: #0b1015; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
         .room-item:hover { border-color: var(--blue); background: #151b24; }
@@ -63,34 +96,27 @@
         .room-count { color: var(--text-muted); font-size: 0.8rem; }
         .room-time { color: var(--red); font-size: 0.7rem; font-weight: bold; margin-top: 2px; }
         .room-join-txt { color: var(--blue); font-weight: bold; font-size: 0.8rem; }
-
         .card-wrapper { width: 100%; height: 350px; margin-bottom: 20px; }
         .big-card { width: 100%; height: 100%; background: #1e272e; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .big-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
         .card-icon { font-size: 4rem; margin-bottom: 15px; } .card-name { font-size: 2rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; } .card-hint { color: var(--red); font-size: 0.8rem; font-weight: 800; margin-top: 15px; }
-        
         .voting-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .vote-card { background: #252f38; border-radius: 10px; padding: 20px 5px; text-align: center; font-weight: 700; cursor: pointer; color: white; border: 2px solid transparent; position: relative; }
         .vote-card.selected { border-color: var(--gold); background: #2f3640; }
         .vote-badge { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; border: 2px solid #1e272e; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 5; opacity: 0; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .vote-badge.visible { opacity: 1; transform: scale(1); }
-
         .reveal-box { background: #1e272e; border-radius: 15px; padding: 20px; text-align: center; border: 1px dashed var(--border); margin-top: 20px; }
         .secret-name { color: var(--gold); font-size: 2rem; font-weight: 900; display: none; margin: 10px 0; }
         .btn-reveal { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
-
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: #1e272e; width: 100%; max-width: 350px; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
         .role-emoji { font-size: 5rem; display: block; margin-bottom: 10px; } .role-title { font-size: 2.2rem; font-weight: 900; margin: 0; text-transform: uppercase; } .role-desc { margin: 15px 0 20px; color: #bdc3c7; line-height: 1.4; }
         .impostor { color: var(--red); } .crew { color: var(--blue); } .win { color: #2ecc71; } .draw { color: var(--gold); }
         .btn-close { background: #0b1015; color: white; padding: 12px 30px; border-radius: 50px; border: 1px solid #555; font-weight: bold; cursor: pointer; margin-top: 15px;}
-
         .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; } .wanted-title { font-family: 'Times New Roman', serif; font-weight: 900; font-size: 3rem; color: #3e2723; margin: 0; letter-spacing: 5px; line-height: 1; text-align: center; } .wanted-sub { font-family: 'Times New Roman', serif; font-size: 0.9rem; color: #3e2723; margin-bottom: 10px; font-weight: bold; text-align: left; margin-left: 15px; } .wanted-img-box { width: 100%; height: 220px; background: #888; border: 3px solid #3e2723; display: flex; align-items: center; justify-content: center; overflow: hidden; } #charImage { width: 100%; height: 100%; object-fit: cover; display: none; } .wanted-name { font-family: 'Times New Roman', serif; font-size: 1.8rem; font-weight: 900; color: #3e2723; text-transform: uppercase; margin-top: 15px; text-align: center; } .wanted-value { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-family: 'Times New Roman'; font-weight: bold; font-size: 1.2rem; color: #3e2723; } .close-x { position: absolute; top: -15px; right: -15px; background: var(--red); color: white; width: 35px; height: 35px; border-radius: 50%; line-height: 35px; text-align: center; font-weight: bold; border: 2px solid white; cursor: pointer; } .loader { border: 4px solid #ccc; border-top: 4px solid var(--red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
         .timer-box { font-size: 1.5rem; font-weight: bold; color: var(--gold); border: 1px solid var(--gold); border-radius: 10px; padding: 5px 15px; margin-bottom: 10px; display: inline-block; background: #000; }
         .event-box { margin-bottom: 15px; background: rgba(55, 66, 250, 0.2); border: 1px solid var(--blue); padding: 10px; border-radius: 10px; color: #fff; font-size: 0.9rem; display: none; animation: fadeIn 0.5s; }
-
         #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; top: 30px; font-weight: bold; opacity: 0; transition: 0.3s; }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
     </style>
@@ -106,11 +132,13 @@
 
     <div id="roulette-screen">
         <div class="roulette-title">¡EMPATE! 🎲</div>
-        <div style="position:relative;">
-            <div class="roulette-arrow"></div>
-            <div class="roulette-wheel" id="rouletteWheel"></div>
+        <div class="roulette-container">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel">
+                </div>
+            <div class="roulette-hub">☠️</div>
         </div>
-        <p style="color:#aaa; margin-top:20px;">La suerte decide quién cae al mar...</p>
+        <p style="color:#aaa; margin-top:20px; font-weight:bold;">La suerte decide quién cae al mar...</p>
     </div>
 
     <div class="ocean"><div class="wave"></div><div class="wave"></div></div>
@@ -157,7 +185,6 @@
                 <option value="AKUMA">🍇 AKUMA NO MI (EVENTOS)</option>
                 <option value="REVERSE">👺 TODOS CONTRA UNO</option>
             </select>
-
             <label>PALABRA SECRETA (OPCIONAL)</label>
             <input type="text" id="customWordInput" placeholder="EJ: MINECRAFT" style="border-color:var(--blue);">
         </div>
@@ -337,27 +364,53 @@
             const wheel = document.getElementById('rouletteWheel');
             screen.style.display = 'flex';
             
+            const palette = ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#2ecc71', '#e67e22', '#1abc9c'];
             let gradientStr = "conic-gradient(";
-            const colors = ["#e74c3c", "#3498db", "#f1c40f", "#9b59b6", "#2ecc71"];
             const step = 360 / candidatos.length;
+            
+            // 1. CREAR EL FONDO (Gajos de colores)
             candidatos.forEach((c, i) => {
-                gradientStr += `${colors[i % colors.length]} ${i*step}deg ${(i+1)*step}deg${i === candidatos.length-1 ? '' : ','}`;
+                const color = palette[i % palette.length];
+                gradientStr += `${color} ${i*step}deg ${(i+1)*step}deg${i === candidatos.length-1 ? '' : ','}`;
             });
             gradientStr += ")";
             wheel.style.background = gradientStr;
-            wheel.innerHTML = `<div class="roulette-names" style="transform: rotate(0deg)">${candidatos.join(" vs ")}</div>`;
+            wheel.innerHTML = ""; // Limpiar
+
+            // 2. CREAR LOS TEXTOS (Rotados geométricamente)
+            candidatos.forEach((name, i) => {
+                const text = document.createElement('div');
+                text.className = 'wheel-text';
+                const angle = i * step + step / 2; // Centro del gajo
+                text.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                text.innerHTML = `<span>${name}</span>`;
+                wheel.appendChild(text);
+            });
+
+            // 3. CALCULAR GIRO PARA CAER EN EL PERDEDOR
+            // El puntero está arriba (0 grados). 
+            // Para que el gajo i quede arriba, la rueda debe girar -(angle + 90) aproximadamente.
+            // Ajustamos: rotation = (vueltas * 360) - angulo_del_centro_del_gajo
+            
+            const winnerIndex = candidatos.indexOf(perdedorReal);
+            const winnerAngle = winnerIndex * step + step / 2;
+            
+            // Añadimos 5 vueltas completas (1800 deg) + ajuste para que el ángulo del ganador quede en el TOP (270 o -90)
+            // En CSS rotate 0 es a las 3 en punto por defecto en textos, pero en conic-gradient el 0 es a las 12.
+            // Probemos lógica simple: Para que el ángulo X esté en el top (0 deg), hay que girar 360 - X.
+            
+            const targetRotation = 3600 + (360 - winnerAngle); 
 
             setTimeout(() => {
-                const rotation = 3600 + Math.random() * 360; 
-                wheel.style.transform = `rotate(${rotation}deg)`;
+                wheel.style.transform = `rotate(${targetRotation}deg)`;
                 
                 setTimeout(() => {
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
                     setTimeout(() => {
                         screen.style.display = 'none';
                         mostrarResultadoVotacion(perdedorReal);
-                    }, 2000);
-                }, 4000);
+                    }, 2500);
+                }, 5000); // 5 segundos de giro
             }, 100);
         }
 
@@ -409,7 +462,6 @@
 
         function iniciarJuegoCliente() {
             jugadores.sort(); 
-            // SEMILLA: RANDOM | PALABRA | MODO | EVENTO
             const seedParts = gameSeed.split('|');
             const baseSeed = seedParts[0] || gameSeed;
             const customWord = (seedParts[1] && seedParts[1] !== 'NONE') ? seedParts[1] : null;
@@ -422,27 +474,22 @@
             if (customWord) personajePartida = customWord;
             else personajePartida = personajes[Math.floor(rand() * personajes.length)];
 
-            // ASIGNAR ROLES SEGÚN MODO
             const numImpostores = jugadores.length >= 8 ? 2 : 1;
             let roles = [];
 
             if (gameMode === 'REVERSE') {
-                // MODO TODOS VS UNO: Todos son "Impostores" (no saben), Uno es "Detective" (sabe)
                 roles = Array(jugadores.length - 1).fill("___IMPOSTOR___");
-                roles.push(personajePartida); // El rol "bueno" aquí es saber la palabra
+                roles.push(personajePartida); 
             } else {
-                // MODO CLASICO / AKUMA
                 roles = Array(jugadores.length - numImpostores).fill(personajePartida);
                 for(let k=0; k<numImpostores; k++) roles.push("___IMPOSTOR___");
             }
 
-            // BARAJAR
             for(let i=roles.length-1; i>0; i--){const j=Math.floor(rand()*(i+1));[roles[i],roles[j]]=[roles[j],roles[i]];}
             rolesPartida = roles;
             const miIndice = jugadores.indexOf(miNombre);
             miRol = (miIndice !== -1) ? roles[miIndice] : "ERROR";
 
-            // EVENTOS (SOLO VISUAL)
             const eventBox = document.getElementById('eventDisplay');
             if (eventType === 'EVENT_ROOM' && gameMode === 'AKUMA') {
                 eventBox.innerHTML = "😈 <b>ROOM DE LAW:</b><br>¡Los roles han sido barajados en secreto!";
@@ -474,9 +521,6 @@
             const imgContainer = document.getElementById('modalImageContainer'); imgContainer.innerHTML = '';
             document.getElementById('modalButtons').innerHTML = '<button class="btn-close" onclick="closeModal()">ENTENDIDO</button>';
 
-            // Lógica visual para REVERSE (Todos contra Uno)
-            // Si miRol es la palabra secreta -> Soy el ÚNICO que sabe (Detective)
-            // Si miRol es ___IMPOSTOR___ -> No sé nada (La turba)
             const seedParts = gameSeed.split('|');
             const gameMode = seedParts[2] || 'CLASSIC';
 
@@ -490,7 +534,6 @@
                     imgContainer.innerHTML = `<button class="btn-photo" onclick="abrirFotoModal('${personajePartida}')">📷 VER FOTO</button>`;
                 }
             } else {
-                // CLASICO / AKUMA
                 if (miRol === "___IMPOSTOR___") {
                     icon.innerText="🤫"; title.innerText="IMPOSTOR"; title.className="role-title impostor";
                     desc.innerHTML="No tienes personaje.<br>Escucha, deduce y miente.";
@@ -522,24 +565,15 @@
 
         function mostrarResultadoVotacion(expulsado) {
             if(document.getElementById('modalOverlay').style.display === 'flex' && document.getElementById('modalTitle').className.includes('win')) return;
-            
             const seedParts = gameSeed.split('|');
             const gameMode = seedParts[2] || 'CLASSIC';
             const sorted = [...jugadores].sort();
-            
-            // ¿Quién era el "malo"?
-            // En CLASICO/AKUMA: El malo es ___IMPOSTOR___
-            // En REVERSE: El "malo" (objetivo) es el que SABE la palabra
             const roleExpulsado = rolesPartida[sorted.indexOf(expulsado)];
-            const soyImpostor = (miRol === "___IMPOSTOR___");
             
-            let haGanadoTripulacion = false; // "Tripulación" son los buenos (mayoría)
-
+            let haGanadoTripulacion = false;
             if (gameMode === 'REVERSE') {
-                // Ganan los despistados (mayoría) si echan al Sabio (palabra)
                 if (roleExpulsado !== "___IMPOSTOR___") haGanadoTripulacion = true;
             } else {
-                // Ganan los Nakamas (mayoría) si echan al Impostor
                 if (roleExpulsado === "___IMPOSTOR___") haGanadoTripulacion = true;
             }
 
@@ -547,14 +581,10 @@
             document.getElementById('modalImageContainer').innerHTML = '';
             
             let htmlDesc = "";
-            
-            // LÓGICA DE MENSAJE FINAL
             if (haGanadoTripulacion) {
-                // GANARON LOS BUENOS (MAYORÍA)
                 icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
                 htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> ha sido eliminado correctamente.`;
             } else {
-                // GANARON LOS MALOS (MINORÍA/IMPOSTOR)
                 icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
                 htmlDesc = `Habéis expulsado a un inocente: <span style="color:white; font-weight:bold;">${expulsado}</span>.`;
             }
@@ -566,7 +596,6 @@
         }
 
         function mostrarPersonajeSecreto() { document.getElementById('secretCharacterDisplay').style.display = 'block'; document.getElementById('secretCharacterDisplay').innerText = personajePartida; document.getElementById('btnShowChar').style.display = 'none'; if (miRol !== "___IMPOSTOR___") document.getElementById('btnImgSecret').style.display = 'inline-flex'; }
-        
         function cyrb128(str){let h1=1779033703,h2=3144134277,h3=1013904242,h4=2773480762;for(let i=0,k;i<str.length;i++){k=str.charCodeAt(i);h1=h2^Math.imul(h1^k,597399067);h2=h3^Math.imul(h2^k,2869860233);h3=h4^Math.imul(h3^k,951274213);h4=h1^Math.imul(h4^k,2716044179)}h1=Math.imul(h3^(h1>>>18),597399067);h2=Math.imul(h4^(h2>>>22),2869860233);h3=Math.imul(h1^(h3>>>17),951274213);h4=Math.imul(h2^(h4>>>19),2716044179);return[(h1^h2^h3^h4)>>>0,(h2^h3)>>>0,(h3^h4)>>>0,(h4^h1)>>>0]}
         function sfc32(a,b,c,d){return function(){a>>>=0;b>>>=0;c>>>=0;d>>>=0;var t=(a+b)|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);d=d+1|0;t=t+d|0;c=c+t|0;return(t>>>0)/4294967296}}
         function showToast(msg) { const x = document.getElementById("toast"); x.innerText = msg; x.className = "show"; setTimeout(()=>x.className=x.className.replace("show",""), 3000); }
