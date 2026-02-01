@@ -55,6 +55,8 @@
         .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; }
         .btn-photo { background: #0b1015; color: var(--gold); border: 1px solid var(--gold); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; }
         .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; }
+        .btn-kick { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; padding: 0 5px; margin-left: 10px; box-shadow: none; width: auto; }
+        .btn-kick:hover { transform: scale(1.2); }
         
         .player-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; background: #0b1015; border-radius: 10px; border: 1px solid var(--border); }
         .player-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
@@ -157,7 +159,7 @@
         <div style="text-align:center; margin-top:10px; color:var(--text-muted);"><span id="onlineCount">0</span> Nakamas conectados</div>
         <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:bold; margin-top:5px; font-size:0.9rem;">⚠️ HABRÁ 1 IMPOSTOR</div>
         <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px;" onclick="comenzarPartida()">ESPERANDO AL CAPITÁN... ⏳</button>
-        <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ LIMPIAR SALA (KICK ALL)</button>
+        <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ ELIMINAR SALA (BORRAR TODO)</button>
         <button class="btn-blue" onclick="copiarLink()">🔗 COPIAR ENLACE</button>
     </div>
 
@@ -249,7 +251,6 @@
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display === 'none') return;
             try {
-                // FIXED: URL cambiada a /api para Render
                 const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
                 if(res.ok) {
                     const rooms = await res.json();
@@ -301,7 +302,6 @@
             
             partidaIniciadaLocal = false; heVotado = false;
             try {
-                // FIXED: URL cambiada a /api para Render
                 const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'join', room: seedActual, player: miNombre }) });
                 if(res.ok) {
                     localStorage.setItem('nakama_name', miNombre); // GUARDAR NOMBRE AL ENTRAR CON ÉXITO
@@ -328,7 +328,6 @@
 
         async function actualizarLista() {
             try {
-                // FIXED: URL cambiada a /api para Render
                 const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'get', room: seedActual, player: miNombre }) });
                 if(res.ok) {
                     const data = await res.json();
@@ -380,10 +379,22 @@
 
         function renderizarLista(leaderName) {
             const list = document.getElementById('onlinePlayerList'); list.innerHTML = '';
+            
             jugadores.forEach(p => {
                 const isCaptain = p === leaderName ? "👑" : "";
-                list.innerHTML += `<li class="player-item"><span><span class="online-dot"></span> ${p} ${isCaptain}</span></li>`;
+                
+                // BOTÓN KICK (SOLO PARA LÍDER O STRIOLO)
+                let kickBtn = "";
+                if ((soyLider || miNombre === "STRIOLO") && p !== miNombre) {
+                    kickBtn = `<button class="btn-kick" onclick="kickPlayer('${p}')" title="Echar a ${p}">❌</button>`;
+                }
+
+                list.innerHTML += `<li class="player-item">
+                    <span><span class="online-dot"></span> ${p} ${isCaptain}</span>
+                    ${kickBtn}
+                </li>`;
             });
+
             document.getElementById('onlineCount').innerText = jugadores.length;
             const numImpostores = jugadores.length >= 8 ? 2 : 1;
             document.getElementById('impostorInfo').innerText = `⚠️ HABRÁ ${numImpostores} IMPOSTOR${numImpostores > 1 ? 'ES' : ''}`;
@@ -416,8 +427,16 @@
         }
 
         async function limpiarSala() {
-            if(!confirm("¿Seguro que quieres echar a todos los demás?")) return;
+            if(!confirm("⚠️ ¿ESTÁS SEGURO?\n\nEsto borrará la sala por completo y expulsará a TODOS (incluyéndote).")) return;
             try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); } catch(e) {}
+        }
+
+        async function kickPlayer(target) {
+            if(!confirm(`¿Echar a ${target} de la sala?`)) return;
+            try { 
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: target }) }); 
+                if(res.ok) showToast(`${target} ha sido expulsado.`);
+            } catch(e) { showToast("Error al expulsar"); }
         }
 
         function iniciarJuegoCliente() {
@@ -484,7 +503,6 @@
             btnElement.style.opacity = '1';
             btnElement.style.borderColor = 'var(--gold)';
             try {
-                // FIXED: URL cambiada a /api para Render
                 await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: target }) });
                 heVotado = true;
                 document.getElementById('votingStatus').innerText = "VOTO ENVIADO. ESPERANDO AL RESTO...";
