@@ -5,121 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nakama Sync - Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --bg-top:#0f2027; --bg-bot:#203a43; --card-bg:#151b24; --text-main:#ecf0f1; --text-muted:#95a5a6; --gold:#f1c40f; --red:#ff4757; --blue:#3742fa; --border:#2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: var(--text-main); overflow-x: hidden; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%); background-attachment: fixed; }
         
-        /* --- NUEVA INTRO MODERNA Y SUAVE --- */
-        #intro-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Fondo degradado marino profundo */
-            background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%);
-            z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column;
-            opacity: 1;
-            transition: opacity 0.8s ease-in-out, visibility 0.8s;
-        }
+        /* INTRO */
+        #intro-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; opacity: 1; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
+        .intro-content-box { position: relative; display: flex; justify-content: center; align-items: center; }
+        .intro-logo-img { width: 200px; height: auto; opacity: 0; transform: translateY(30px) scale(0.9); animation: floatInEpic 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); position: relative; z-index: 2; }
+        .intro-glow { position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, rgba(0,0,0,0) 70%); border-radius: 50%; opacity: 0; animation: pulseGlow 2s ease-in-out forwards 0.5s; }
+        @keyframes floatInEpic { to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pulseGlow { 0% { opacity: 0; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; transform: scale(1); } }
+        .intro-fade-out { opacity: 0 !important; visibility: hidden; transform: scale(1.1); filter: blur(10px); }
 
-        .intro-content-box {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        /* RULETA */
+        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .roulette-title { color: var(--gold); font-size: 2rem; margin-bottom: 30px; text-transform: uppercase; animation: blink 1s infinite; text-align: center; }
+        .roulette-wheel { width: 300px; height: 300px; border-radius: 50%; border: 10px solid var(--gold); position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); box-shadow: 0 0 50px rgba(241, 196, 15, 0.5); background: conic-gradient(from 0deg, #e74c3c 0%, #3498db 50%, #e74c3c 100%); display: flex; align-items: center; justify-content: center; }
+        .roulette-arrow { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid white; z-index: 5001; filter: drop-shadow(0 5px 5px black); }
+        .roulette-center { width: 50px; height: 50px; background: white; border-radius: 50%; position: absolute; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .roulette-names { position: absolute; width: 100%; height: 100%; text-align: center; font-weight: bold; font-size: 1.2rem; color: white; display: flex; justify-content: center; align-items: center; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
-        /* El Logo Jolly Roger (jolly.png) */
-        .intro-logo-img {
-            width: 200px; /* Un poco más grande para que impacte */
-            height: auto;
-            opacity: 0;
-            transform: translateY(30px) scale(0.9);
-            /* Animación de entrada suave: flota hacia arriba y aparece */
-            animation: floatInEpic 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            /* Sombra dorada suave para darle impacto */
-            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Resplandor detrás del logo */
-        .intro-glow {
-            position: absolute;
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            opacity: 0;
-            animation: pulseGlow 2s ease-in-out forwards 0.5s; /* Empieza un poco después */
-        }
-
-        /* Animaciones de Entrada */
-        @keyframes floatInEpic {
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes pulseGlow {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.8; transform: scale(1); }
-        }
-
-        /* Clase para la Salida Suave (se añade con JS) */
-        .intro-fade-out {
-            opacity: 0 !important;
-            visibility: hidden;
-            /* Al salir, el fondo se agranda un poco y se desenfoca */
-            transform: scale(1.1);
-            filter: blur(10px);
-        }
-
-        /* --- RESTO DEL CSS --- */
-        .ocean { height: 100px; width: 100%; position: absolute; bottom: 0; left: 0; z-index: -1; overflow: hidden; }
-        .wave { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 198'%3E%3Cpath fill='%232c3e50' d='M1600 198H0V0h0c266.7 0 266.7 42 533.3 42S800 0 1066.7 0 1333.3 42 1600 42z'/%3E%3C/svg%3E") repeat-x; position: absolute; width: 6400px; height: 198px; bottom: -60px; opacity: 0.3; animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite; transform: translate3d(0, 0, 0); }
-        .wave:nth-of-type(2) { bottom: -80px; opacity: 0.5; animation: wave 10s -1.25s infinite, swell 7s -1.25s infinite; }
-        @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
-        
+        /* RESTO CSS */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 20px; animation: float 6s ease-in-out infinite; }
         .header-logo { max-width: 280px; width: 80%; height: auto; display: block; margin: 0 auto 5px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
         .container { width: 100%; max-width: 400px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s; }
         
-        @media (min-width: 768px) {
-            #setupScreen.container { max-width: 800px; flex-direction: row; align-items: flex-start; }
-            .setup-left { flex: 1; min-width: 300px; }
-            .setup-right { flex: 1; border-left: 1px solid var(--border); padding-left: 20px; min-height: 250px; }
-        }
-        @media (max-width: 767px) {
-            .setup-right { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; }
-        }
-
+        @media (min-width: 768px) { #setupScreen.container { max-width: 800px; flex-direction: row; align-items: flex-start; } .setup-left { flex: 1; min-width: 300px; } .setup-right { flex: 1; border-left: 1px solid var(--border); padding-left: 20px; min-height: 250px; } }
+        @media (max-width: 767px) { .setup-right { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #gameScreen, #votingScreen, #lobbyScreen { display: none; }
 
         input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; }
-        input:focus { border-color: var(--red); }
-        input.error { border-color: var(--red); animation: shake 0.5s; }
-        input { text-transform: uppercase; }
-        label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
+        input:focus { border-color: var(--red); } input.error { border-color: var(--red); animation: shake 0.5s; } input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
 
-        /* USER SAVED DISPLAY */
         .user-saved-box { display: none; align-items: center; justify-content: space-between; background: #1e272e; padding: 15px; border-radius: 12px; border: 1px solid var(--blue); }
         .user-saved-name { font-size: 1.2rem; font-weight: 900; color: white; }
         .btn-settings { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0 10px; color: var(--text-muted); transition: 0.2s; box-shadow: none; width: auto; }
         .btn-settings:hover { color: var(--gold); transform: rotate(45deg); }
 
         button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
-        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
-        button.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        
-        .btn-main { background: var(--red); color: white; }
-        .btn-blue { background: var(--blue); color: white; margin-top: 10px; }
-        .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; }
-        .btn-photo { background: #0b1015; color: var(--gold); border: 1px solid var(--gold); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; }
-        .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; }
-        .btn-kick { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; padding: 0 5px; margin-left: 10px; box-shadow: none; width: auto; }
-        .btn-kick:hover { transform: scale(1.2); }
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); } button.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        .btn-main { background: var(--red); color: white; } .btn-blue { background: var(--blue); color: white; margin-top: 10px; } .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; } .btn-photo { background: #0b1015; color: var(--gold); border: 1px solid var(--gold); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; } .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; } .btn-kick { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; padding: 0 5px; margin-left: 10px; box-shadow: none; width: auto; } .btn-kick:hover { transform: scale(1.2); }
         
         .player-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; background: #0b1015; border-radius: 10px; border: 1px solid var(--border); }
         .player-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
@@ -136,14 +69,11 @@
         .card-wrapper { width: 100%; height: 350px; margin-bottom: 20px; }
         .big-card { width: 100%; height: 100%; background: #1e272e; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .big-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        .card-icon { font-size: 4rem; margin-bottom: 15px; }
-        .card-name { font-size: 2rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; }
-        .card-hint { color: var(--red); font-size: 0.8rem; font-weight: 800; margin-top: 15px; }
+        .card-icon { font-size: 4rem; margin-bottom: 15px; } .card-name { font-size: 2rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; } .card-hint { color: var(--red); font-size: 0.8rem; font-weight: 800; margin-top: 15px; }
         
         .voting-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .vote-card { background: #252f38; border-radius: 10px; padding: 20px 5px; text-align: center; font-weight: 700; cursor: pointer; color: white; border: 2px solid transparent; position: relative; }
         .vote-card.selected { border-color: var(--gold); background: #2f3640; }
-        
         .vote-badge { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; border: 2px solid #1e272e; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 5; opacity: 0; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .vote-badge.visible { opacity: 1; transform: scale(1); }
 
@@ -153,22 +83,15 @@
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: #1e272e; width: 100%; max-width: 350px; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
-        .role-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
-        .role-title { font-size: 2.2rem; font-weight: 900; margin: 0; text-transform: uppercase; }
-        .role-desc { margin: 15px 0 20px; color: #bdc3c7; line-height: 1.4; }
-        .impostor { color: var(--red); } .crew { color: var(--blue); } .win { color: #2ecc71; }
+        .role-emoji { font-size: 5rem; display: block; margin-bottom: 10px; } .role-title { font-size: 2.2rem; font-weight: 900; margin: 0; text-transform: uppercase; } .role-desc { margin: 15px 0 20px; color: #bdc3c7; line-height: 1.4; }
+        .impostor { color: var(--red); } .crew { color: var(--blue); } .win { color: #2ecc71; } .draw { color: var(--gold); }
         .btn-close { background: #0b1015; color: white; padding: 12px 30px; border-radius: 50px; border: 1px solid #555; font-weight: bold; cursor: pointer; margin-top: 15px;}
 
-        .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; }
-        .wanted-title { font-family: 'Times New Roman', serif; font-weight: 900; font-size: 3rem; color: #3e2723; margin: 0; letter-spacing: 5px; line-height: 1; text-align: center; }
-        .wanted-sub { font-family: 'Times New Roman', serif; font-size: 0.9rem; color: #3e2723; margin-bottom: 10px; font-weight: bold; text-align: left; margin-left: 15px; }
-        .wanted-img-box { width: 100%; height: 220px; background: #888; border: 3px solid #3e2723; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        #charImage { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .wanted-name { font-family: 'Times New Roman', serif; font-size: 1.8rem; font-weight: 900; color: #3e2723; text-transform: uppercase; margin-top: 15px; text-align: center; }
-        .wanted-value { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-family: 'Times New Roman'; font-weight: bold; font-size: 1.2rem; color: #3e2723; }
-        .close-x { position: absolute; top: -15px; right: -15px; background: var(--red); color: white; width: 35px; height: 35px; border-radius: 50%; line-height: 35px; text-align: center; font-weight: bold; border: 2px solid white; cursor: pointer; }
-        .loader { border: 4px solid #ccc; border-top: 4px solid var(--red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s infinite; }
+        .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; } .wanted-title { font-family: 'Times New Roman', serif; font-weight: 900; font-size: 3rem; color: #3e2723; margin: 0; letter-spacing: 5px; line-height: 1; text-align: center; } .wanted-sub { font-family: 'Times New Roman', serif; font-size: 0.9rem; color: #3e2723; margin-bottom: 10px; font-weight: bold; text-align: left; margin-left: 15px; } .wanted-img-box { width: 100%; height: 220px; background: #888; border: 3px solid #3e2723; display: flex; align-items: center; justify-content: center; overflow: hidden; } #charImage { width: 100%; height: 100%; object-fit: cover; display: none; } .wanted-name { font-family: 'Times New Roman', serif; font-size: 1.8rem; font-weight: 900; color: #3e2723; text-transform: uppercase; margin-top: 15px; text-align: center; } .wanted-value { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-family: 'Times New Roman'; font-weight: bold; font-size: 1.2rem; color: #3e2723; } .close-x { position: absolute; top: -15px; right: -15px; background: var(--red); color: white; width: 35px; height: 35px; border-radius: 50%; line-height: 35px; text-align: center; font-weight: bold; border: 2px solid white; cursor: pointer; } .loader { border: 4px solid #ccc; border-top: 4px solid var(--red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .timer-box { font-size: 1.5rem; font-weight: bold; color: var(--gold); border: 1px solid var(--gold); border-radius: 10px; padding: 5px 15px; margin-bottom: 10px; display: inline-block; background: #000; }
+        .event-box { margin-bottom: 15px; background: rgba(55, 66, 250, 0.2); border: 1px solid var(--blue); padding: 10px; border-radius: 10px; color: #fff; font-size: 0.9rem; display: none; animation: fadeIn 0.5s; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; top: 30px; font-weight: bold; opacity: 0; transition: 0.3s; }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
@@ -183,6 +106,16 @@
         </div>
     </div>
 
+    <div id="roulette-screen">
+        <div class="roulette-title">¡EMPATE! 🎲</div>
+        <div style="position:relative;">
+            <div class="roulette-arrow"></div>
+            <div class="roulette-wheel" id="rouletteWheel">
+                </div>
+        </div>
+        <p style="color:#aaa; margin-top:20px;">La suerte decide quién cae al mar...</p>
+    </div>
+
     <div class="ocean"><div class="wave"></div><div class="wave"></div></div>
     <div id="toast">Mensaje</div>
 
@@ -194,31 +127,23 @@
     <div id="setupScreen" class="container">
         <div class="setup-left">
             <h2 style="color:var(--gold); margin-top:0;">UNIRSE / CREAR</h2>
-            
             <div class="input-group">
                 <label>1. CLAVE DE LA SALA</label>
                 <input type="text" id="seedInput" placeholder="EJ: WANO" autocomplete="off">
             </div>
-
             <div class="input-group" style="margin-top:15px;">
                 <label>2. TU NOMBRE (OBLIGATORIO)</label>
-                
                 <input type="text" id="myPlayerName" placeholder="TU NOMBRE PIRATA" autocomplete="off">
-                
                 <div id="savedNameBox" class="user-saved-box">
                     <span id="displaySavedName" class="user-saved-name"></span>
                     <button class="btn-settings" onclick="cambiarNombre()" title="Cambiar Nombre">⚙️</button>
                 </div>
             </div>
-
             <button class="btn-main" style="margin-top:20px;" onclick="unirseSala()">UNIRSE A LA SALA 🏴‍☠️</button>
         </div>
-
         <div class="setup-right">
             <h3 style="color:var(--text-muted); margin:0 0 10px 0; font-size:0.9rem;">SALAS ACTIVAS</h3>
-            <div id="activeRooms" class="room-list-box">
-                <div style="color:#555; font-size:0.8rem; text-align:center;">Buscando salas...</div>
-            </div>
+            <div id="activeRooms" class="room-list-box"><div style="color:#555; font-size:0.8rem; text-align:center;">Buscando salas...</div></div>
         </div>
     </div>
 
@@ -228,6 +153,12 @@
         <ul id="onlinePlayerList" class="player-list"></ul>
         <div style="text-align:center; margin-top:10px; color:var(--text-muted);"><span id="onlineCount">0</span> Nakamas conectados</div>
         <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:bold; margin-top:5px; font-size:0.9rem;">⚠️ HABRÁ 1 IMPOSTOR</div>
+        
+        <div id="customWordSection" style="margin-top:15px; display:none;">
+            <label>PALABRA SECRETA (OPCIONAL)</label>
+            <input type="text" id="customWordInput" placeholder="EJ: MINECRAFT" style="border-color:var(--blue);">
+        </div>
+
         <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px;" onclick="comenzarPartida()">ESPERANDO AL CAPITÁN... ⏳</button>
         <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ ELIMINAR SALA (BORRAR TODO)</button>
         <button class="btn-blue" onclick="copiarLink()">🔗 COPIAR ENLACE</button>
@@ -235,6 +166,8 @@
 
     <div id="gameScreen" class="container">
         <div class="room-tag" id="roomInfo">SALA: ???</div>
+        <div id="gameTimer" class="timer-box">03:00</div>
+        <div id="eventDisplay" class="event-box"></div>
         <div class="card-wrapper">
             <div class="big-card" id="myCard" onclick="revelarMiRol()">
                 <div class="card-icon">👆</div>
@@ -285,52 +218,30 @@
         
         let miNombre = "", seedActual = "", gameSeed = "", jugadores = [], pollingInterval = null;
         let miRol = "", personajePartida = "", soyLider = false, partidaIniciadaLocal = false;
-        let heVotado = false;
+        let heVotado = false, timerInterval = null, roulettePlayed = false;
 
         window.onload = () => { 
-            // --- LÓGICA DE LA NUEVA INTRO ---
-            // Esperamos un poco para que se vea la animación de entrada
             setTimeout(() => {
                 const loader = document.getElementById('intro-loader');
-                // Añadimos la clase que hace la salida suave (fade out y desenfoque)
                 loader.classList.add('intro-fade-out');
-                // Esperamos a que termine la transición CSS (0.8s) para quitarlo del todo
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 800);
-            }, 3000); // La intro dura 3 segundos en total antes de empezar a irse
-
-            // Lógica normal del juego
-            cargarSalas(); 
-            setInterval(cargarSalas, 5000); 
-            cargarNombreGuardado(); 
+                setTimeout(() => { loader.style.display = 'none'; }, 800);
+            }, 3000);
+            cargarSalas(); setInterval(cargarSalas, 5000); cargarNombreGuardado(); 
         };
 
-        // --- GESTIÓN DE NOMBRE (LOCAL STORAGE) ---
         function cargarNombreGuardado() {
             const saved = localStorage.getItem('nakama_name');
             if(saved) {
-                miNombre = saved;
-                document.getElementById('myPlayerName').value = saved; // Sync valor oculto
+                miNombre = saved; document.getElementById('myPlayerName').value = saved;
                 document.getElementById('myPlayerName').style.display = 'none';
                 document.getElementById('savedNameBox').style.display = 'flex';
                 document.getElementById('displaySavedName').innerText = `HOLA, ${saved}`;
             } else {
-                document.getElementById('myPlayerName').style.display = 'block';
-                document.getElementById('savedNameBox').style.display = 'none';
+                document.getElementById('myPlayerName').style.display = 'block'; document.getElementById('savedNameBox').style.display = 'none';
             }
         }
+        function cambiarNombre() { localStorage.removeItem('nakama_name'); miNombre = ""; document.getElementById('myPlayerName').value = ""; document.getElementById('myPlayerName').style.display = 'block'; document.getElementById('savedNameBox').style.display = 'none'; document.getElementById('myPlayerName').focus(); }
 
-        function cambiarNombre() {
-            localStorage.removeItem('nakama_name');
-            miNombre = "";
-            document.getElementById('myPlayerName').value = "";
-            document.getElementById('myPlayerName').style.display = 'block';
-            document.getElementById('savedNameBox').style.display = 'none';
-            document.getElementById('myPlayerName').focus();
-        }
-
-        // --- ONLINE ---
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display === 'none') return;
             try {
@@ -341,12 +252,8 @@
                     if(rooms.length === 0) { container.innerHTML = '<div style="color:#555; font-size:0.8rem; text-align:center;">No hay salas activas.<br>¡Crea una!</div>'; return; }
                     container.innerHTML = '';
                     rooms.forEach(r => {
-                        const createdAt = new Date(r.created_at);
-                        const diffMins = (new Date() - createdAt) / 1000 / 60;
-                        const minsLeft = Math.max(0, Math.floor(30 - diffMins));
-                        
-                        const div = document.createElement('div');
-                        div.className = 'room-item';
+                        const minsLeft = Math.max(0, Math.floor(30 - (new Date() - new Date(r.created_at)) / 1000 / 60));
+                        const div = document.createElement('div'); div.className = 'room-item';
                         div.innerHTML = `<div><div class="room-code">${r.room_code}</div><div class="room-count">👥 ${r.count} Piratas</div><div class="room-time">⏳ Expira en: ${minsLeft} min</div></div><div class="room-join-txt">ENTRAR ➡️</div>`;
                         div.onclick = () => unirseDesdeLista(r.room_code);
                         container.appendChild(div);
@@ -357,56 +264,31 @@
 
         function unirseDesdeLista(roomCode) {
             let name = document.getElementById('myPlayerName').value.trim().toUpperCase();
-            // Si hay nombre guardado, lo usamos
-            const saved = localStorage.getItem('nakama_name');
-            if(saved) name = saved;
-
-            if(!name) {
-                showToast("⚠️ ¡PRIMERO PON TU NOMBRE!");
-                const ni = document.getElementById('myPlayerName');
-                ni.classList.add('error'); setTimeout(() => ni.classList.remove('error'), 500);
-                ni.focus();
-                return;
-            }
-            document.getElementById('seedInput').value = roomCode;
-            unirseSala();
+            const saved = localStorage.getItem('nakama_name'); if(saved) name = saved;
+            if(!name) { showToast("⚠️ ¡PRIMERO PON TU NOMBRE!"); document.getElementById('myPlayerName').focus(); return; }
+            document.getElementById('seedInput').value = roomCode; unirseSala();
         }
 
         async function unirseSala() {
             seedActual = document.getElementById('seedInput').value.trim().toUpperCase();
-            
-            // Determinar nombre (Input o Storage)
             let nameInput = document.getElementById('myPlayerName').value.trim().toUpperCase();
-            const saved = localStorage.getItem('nakama_name');
-            miNombre = saved ? saved : nameInput;
-
-            if(!miNombre) { showToast("¡Falta tu nombre!"); const ni = document.getElementById('myPlayerName'); ni.classList.add('error'); setTimeout(() => ni.classList.remove('error'), 500); return; }
-            if(!seedActual) { showToast("¡Falta la sala!"); return; }
+            const saved = localStorage.getItem('nakama_name'); miNombre = saved ? saved : nameInput;
+            if(!miNombre || !seedActual) { showToast("¡Datos incompletos!"); return; }
             
-            partidaIniciadaLocal = false; heVotado = false;
+            partidaIniciadaLocal = false; heVotado = false; roulettePlayed = false;
             try {
                 const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'join', room: seedActual, player: miNombre }) });
-                if(res.ok) {
-                    localStorage.setItem('nakama_name', miNombre); // GUARDAR NOMBRE AL ENTRAR CON ÉXITO
-                    irALobby(); 
-                } else if(res.status === 409) {
-                    showToast("⛔ NOMBRE OCUPADO EN ESTA SALA");
-                } else {
-                    showToast("Error al conectar");
-                }
+                if(res.ok) { localStorage.setItem('nakama_name', miNombre); irALobby(); }
+                else if(res.status === 409) showToast("⛔ NOMBRE OCUPADO");
+                else showToast("Error al conectar");
             } catch(e) { showToast("Error fatal"); }
         }
 
         function irALobby() {
-            document.getElementById('setupScreen').style.display = 'none';
-            document.getElementById('votingScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'block';
-            document.getElementById('lobbyScreen').style.display = 'flex';
+            document.getElementById('setupScreen').style.display = 'none'; document.getElementById('votingScreen').style.display = 'none'; document.getElementById('gameScreen').style.display = 'none'; document.getElementById('mainHeader').style.display = 'block'; document.getElementById('lobbyScreen').style.display = 'flex';
             document.getElementById('lobbyRoomName').innerText = seedActual;
             if(pollingInterval) clearInterval(pollingInterval);
-            actualizarLista();
-            pollingInterval = setInterval(actualizarLista, 2000); 
+            actualizarLista(); pollingInterval = setInterval(actualizarLista, 2000); 
         }
 
         async function actualizarLista() {
@@ -416,118 +298,134 @@
                     const data = await res.json();
                     if(data.restart) { location.reload(); return; }
                     
-                    jugadores = data.players;
-                    soyLider = (data.leader === miNombre);
-                    gameSeed = data.seed;
+                    jugadores = data.players; soyLider = (data.leader === miNombre); gameSeed = data.seed;
                     
                     if (data.started && !partidaIniciadaLocal) { partidaIniciadaLocal = true; iniciarJuegoCliente(); }
                     else if (!data.started && partidaIniciadaLocal) { location.reload(); }
                     else if (!partidaIniciadaLocal) { renderizarLista(data.leader); }
 
                     if (data.ejected) {
-                        mostrarResultadoVotacion(data.ejected);
+                        gestionarResultado(data);
                         if(data.votes) actualizarVotos(data.votes);
                         document.getElementById('btnShowChar').style.display = 'inline-block';
                     }
-                    
-                    if (data.hasVoted) {
-                        heVotado = true;
-                        document.getElementById('votingStatus').innerText = "ESPERANDO AL RESTO DE NAKAMAS...";
-                    }
+                    if (data.hasVoted) { heVotado = true; document.getElementById('votingStatus').innerText = "ESPERANDO AL RESTO DE NAKAMAS..."; }
                 }
             } catch(e) { console.error(e); }
+        }
+
+        function gestionarResultado(data) {
+            // DETECTAR EMPATE PARA RULETA
+            const votes = data.votes || {};
+            let maxV = 0; Object.values(votes).forEach(v => { if(v > maxV) maxV = v; });
+            const tied = Object.keys(votes).filter(k => votes[k] === maxV);
+
+            if (tied.length > 1 && !roulettePlayed) {
+                // Hay empate y aun no hemos jugado la ruleta
+                roulettePlayed = true; // Evitar que se repita
+                jugarRuleta(tied, data.ejected);
+            } else if (tied.length === 1 || roulettePlayed) {
+                // Victoria normal o ruleta ya jugada
+                mostrarResultadoVotacion(data.ejected);
+            }
+        }
+
+        function jugarRuleta(candidatos, perdedorReal) {
+            const screen = document.getElementById('roulette-screen');
+            const wheel = document.getElementById('rouletteWheel');
+            screen.style.display = 'flex';
+            
+            // Generar gajos de la ruleta (visual)
+            let gradientStr = "conic-gradient(";
+            const colors = ["#e74c3c", "#3498db", "#f1c40f", "#9b59b6", "#2ecc71"];
+            const step = 360 / candidatos.length;
+            candidatos.forEach((c, i) => {
+                gradientStr += `${colors[i % colors.length]} ${i*step}deg ${(i+1)*step}deg${i === candidatos.length-1 ? '' : ','}`;
+            });
+            gradientStr += ")";
+            wheel.style.background = gradientStr;
+            wheel.innerHTML = `<div class="roulette-names" style="transform: rotate(0deg)">${candidatos.join(" vs ")}</div>`; // Simplificado
+
+            // Calcular rotación para caer en el perdedorReal (aproximado visual)
+            // En realidad, haremos girar y al final mostramos el nombre
+            setTimeout(() => {
+                const rotation = 3600 + Math.random() * 360; 
+                wheel.style.transform = `rotate(${rotation}deg)`;
+                
+                setTimeout(() => {
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    setTimeout(() => {
+                        screen.style.display = 'none';
+                        mostrarResultadoVotacion(perdedorReal);
+                    }, 2000);
+                }, 4000);
+            }, 100);
         }
 
         function actualizarVotos(votes) {
             const grid = document.getElementById('votingGrid');
             if(grid.children.length === 0) return;
-
             for(let btn of grid.children) {
-                const playerName = btn.innerText;
-                const count = votes[playerName] || 0;
-                let badge = btn.querySelector('.vote-badge');
-                if(!badge) {
-                    badge = document.createElement('div');
-                    badge.className = 'vote-badge';
-                    btn.appendChild(badge);
-                }
-                if(count > 0) {
-                    badge.innerText = count;
-                    badge.classList.add('visible');
-                } else {
-                    badge.classList.remove('visible');
-                }
+                const pName = btn.innerText; const count = votes[pName] || 0;
+                let badge = btn.querySelector('.vote-badge'); if(!badge) { badge = document.createElement('div'); badge.className = 'vote-badge'; btn.appendChild(badge); }
+                if(count > 0) { badge.innerText = count; badge.classList.add('visible'); } else { badge.classList.remove('visible'); }
             }
         }
 
         function renderizarLista(leaderName) {
             const list = document.getElementById('onlinePlayerList'); list.innerHTML = '';
-            
             jugadores.forEach(p => {
                 const isCaptain = p === leaderName ? "👑" : "";
-                
-                // BOTÓN KICK (SOLO PARA LÍDER O STRIOLO)
                 let kickBtn = "";
-                if ((soyLider || miNombre === "STRIOLO") && p !== miNombre) {
-                    kickBtn = `<button class="btn-kick" onclick="kickPlayer('${p}')" title="Echar a ${p}">❌</button>`;
-                }
-
-                list.innerHTML += `<li class="player-item">
-                    <span><span class="online-dot"></span> ${p} ${isCaptain}</span>
-                    ${kickBtn}
-                </li>`;
+                if ((soyLider || miNombre === "STRIOLO") && p !== miNombre) kickBtn = `<button class="btn-kick" onclick="kickPlayer('${p}')">❌</button>`;
+                list.innerHTML += `<li class="player-item"><span><span class="online-dot"></span> ${p} ${isCaptain}</span>${kickBtn}</li>`;
             });
-
             document.getElementById('onlineCount').innerText = jugadores.length;
-            const numImpostores = jugadores.length >= 8 ? 2 : 1;
-            document.getElementById('impostorInfo').innerText = `⚠️ HABRÁ ${numImpostores} IMPOSTOR${numImpostores > 1 ? 'ES' : ''}`;
             
             const btnZarpar = document.getElementById('btnZarpar');
             const btnClean = document.getElementById('btnClean');
+            const customInput = document.getElementById('customWordSection');
             
-            // LÓGICA DE BOTONES (LÍDER O ADMIN "STRIOLO")
-            if (soyLider || miNombre === "STRIOLO") { 
-                btnClean.style.display = 'block';
-            } else {
-                btnClean.style.display = 'none';
-            }
-
-            if(soyLider) {
+            if (soyLider || miNombre === "STRIOLO") btnClean.style.display = 'block'; else btnClean.style.display = 'none';
+            if (soyLider) { 
                 btnZarpar.innerText = "ZARPAR TODOS ⚓"; btnZarpar.classList.remove('disabled'); 
+                customInput.style.display = 'block';
             } else { 
                 btnZarpar.innerText = "ESPERANDO AL CAPITÁN... ⏳"; btnZarpar.classList.add('disabled'); 
+                customInput.style.display = 'none';
             }
         }
 
         async function comenzarPartida() {
             if(!soyLider) return;
             if(jugadores.length < 3) { showToast("Mínimo 3 jugadores"); return; }
-            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre }) }); } catch(e) {}
+            const custom = document.getElementById('customWordInput').value;
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, customWord: custom }) }); } catch(e) {}
         }
 
-        async function reiniciarPartida() {
-            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); } catch(e) {}
-        }
-
-        async function limpiarSala() {
-            if(!confirm("⚠️ ¿ESTÁS SEGURO?\n\nEsto borrará la sala por completo y expulsará a TODOS (incluyéndote).")) return;
-            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); } catch(e) {}
-        }
-
-        async function kickPlayer(target) {
-            if(!confirm(`¿Echar a ${target} de la sala?`)) return;
-            try { 
-                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: target }) }); 
-                if(res.ok) showToast(`${target} ha sido expulsado.`);
-            } catch(e) { showToast("Error al expulsar"); }
-        }
+        async function reiniciarPartida() { try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); } catch(e) {} }
+        async function limpiarSala() { if(!confirm("⚠️ ¿BORRAR SALA?")) return; try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); } catch(e) {} }
+        async function kickPlayer(target) { if(!confirm(`¿Echar a ${target}?`)) return; try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: target }) }); } catch(e) {} }
 
         function iniciarJuegoCliente() {
             jugadores.sort(); 
-            const seedString = seedActual + gameSeed; 
-            const seed = cyrb128(seedString);
+            // PARSEAR SEMILLA PARA EXTRAS (Evento | Palabra)
+            const seedParts = gameSeed.split('|');
+            const baseSeed = seedParts[0] || gameSeed;
+            const customWord = seedParts[1] !== 'NONE' ? seedParts[1] : null;
+            const eventType = seedParts[2] || 'NO_EVENT';
+
+            const seed = cyrb128(seedActual + baseSeed);
             const rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
-            personajePartida = personajes[Math.floor(rand() * personajes.length)];
+            
+            // ELECCION DE PALABRA
+            if (customWord) {
+                personajePartida = customWord;
+            } else {
+                personajePartida = personajes[Math.floor(rand() * personajes.length)];
+            }
+
+            // ROLES
             const numImpostores = jugadores.length >= 8 ? 2 : 1;
             let roles = Array(jugadores.length - numImpostores).fill(personajePartida);
             for(let k=0; k<numImpostores; k++) roles.push("___IMPOSTOR___");
@@ -536,12 +434,38 @@
             const miIndice = jugadores.indexOf(miNombre);
             miRol = (miIndice !== -1) ? roles[miIndice] : "ERROR";
 
-            document.getElementById('lobbyScreen').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'flex';
-            document.getElementById('roomInfo').innerText = `SALA: ${seedActual}`;
-            document.getElementById('cardNameDisplay').innerText = miNombre;
-            resetCardVisual();
+            // EVENTO?
+            const eventBox = document.getElementById('eventDisplay');
+            if (eventType === 'EVENT_ROOM') {
+                eventBox.innerHTML = "😈 <b>ROOM DE LAW:</b><br>¡Los roles se han barajado en secreto!";
+                eventBox.style.display = 'block';
+                // (Logica visual, en realidad los roles ya se asignaron barajados arriba, esto es puro lore)
+            } else {
+                eventBox.style.display = 'none';
+            }
+
+            document.getElementById('lobbyScreen').style.display = 'none'; document.getElementById('mainHeader').style.display = 'none'; document.getElementById('gameScreen').style.display = 'flex'; document.getElementById('roomInfo').innerText = `SALA: ${seedActual}`; document.getElementById('cardNameDisplay').innerText = miNombre; resetCardVisual();
+            
+            // INICIAR TIMER
+            iniciarTimer();
+        }
+
+        function iniciarTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            let timeLeft = 180; // 3 minutos
+            const timerEl = document.getElementById('gameTimer');
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                timerEl.innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerEl.innerText = "¡A VOTAR!";
+                    timerEl.style.color = "var(--red)";
+                    navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
         }
 
         function revelarMiRol() {
@@ -564,36 +488,24 @@
 
         function irAVotacion() {
             if(!confirm("¿Ir a votación?")) return;
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('votingScreen').style.display = 'flex';
-            
+            document.getElementById('gameScreen').style.display = 'none'; document.getElementById('votingScreen').style.display = 'flex';
             const grid = document.getElementById('votingGrid'); grid.innerHTML = "";
             jugadores.forEach(n => {
                 const btn = document.createElement('div'); btn.className = 'vote-card'; btn.innerText = n;
-                btn.onclick = () => enviarVoto(n, btn);
-                grid.appendChild(btn);
+                btn.onclick = () => enviarVoto(n, btn); grid.appendChild(btn);
             });
-
-            document.getElementById('secretCharacterDisplay').style.display = 'none';
-            document.getElementById('btnShowChar').style.display = 'none';
-            document.getElementById('btnImgSecret').style.display = 'none';
+            document.getElementById('secretCharacterDisplay').style.display = 'none'; document.getElementById('btnShowChar').style.display = 'none'; document.getElementById('btnImgSecret').style.display = 'none';
         }
 
         async function enviarVoto(target, btnElement) {
             if (heVotado) return;
-            const buttons = document.querySelectorAll('.vote-card');
-            buttons.forEach(b => b.style.opacity = '0.5');
-            btnElement.style.opacity = '1';
-            btnElement.style.borderColor = 'var(--gold)';
-            try {
-                await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: target }) });
-                heVotado = true;
-                document.getElementById('votingStatus').innerText = "VOTO ENVIADO. ESPERANDO AL RESTO...";
-            } catch(e) { showToast("Error al votar"); }
+            const buttons = document.querySelectorAll('.vote-card'); buttons.forEach(b => b.style.opacity = '0.5'); btnElement.style.opacity = '1'; btnElement.style.borderColor = 'var(--gold)';
+            try { await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: target }) }); heVotado = true; document.getElementById('votingStatus').innerText = "VOTO ENVIADO..."; } catch(e) { showToast("Error al votar"); }
         }
 
         function mostrarResultadoVotacion(expulsado) {
             if(document.getElementById('modalOverlay').style.display === 'flex' && document.getElementById('modalTitle').className.includes('win')) return;
+            
             const sorted = [...jugadores].sort();
             const roleVoted = rolesPartida[sorted.indexOf(expulsado)] === "___IMPOSTOR___";
             const soyImpostor = (miRol === "___IMPOSTOR___");
@@ -602,78 +514,38 @@
             
             let htmlDesc = "";
             if (roleVoted) {
-                if (soyImpostor) {
-                    icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor";
-                    htmlDesc = `Te han descubierto.<br>Has sido expulsado.`;
-                } else {
-                    icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
-                    htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> era el Impostor.<br>¡Buen trabajo Nakamas!`;
-                }
+                if (soyImpostor) { icon.innerText="💀"; title.innerText="DERROTA"; title.className="role-title impostor"; htmlDesc = `Te han descubierto.<br>Has sido expulsado.`; } 
+                else { icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win"; htmlDesc = `<span style="color:var(--red); font-weight:bold;">${expulsado}</span> era el Impostor.<br>¡Buen trabajo Nakamas!`; }
             } else {
-                if (soyImpostor) {
-                    icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win";
-                    htmlDesc = `¡Has conseguido engañarlos a todos!<br>Han expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.`;
-                } else {
-                    icon.innerText="💀"; title.innerText="HEMOS PERDIDO"; title.className="role-title impostor";
-                    htmlDesc = `Habéis expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.<br>Era inocente.`;
+                if (soyImpostor) { icon.innerText="🎉"; title.innerText="¡VICTORIA!"; title.className="role-title win"; htmlDesc = `¡Has conseguido engañarlos a todos!<br>Han expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.`; } 
+                else { 
+                    icon.innerText="💀"; title.innerText="HEMOS PERDIDO"; title.className="role-title impostor"; htmlDesc = `Habéis expulsado a <span style="color:white; font-weight:bold;">${expulsado}</span>.<br>Era inocente.`; 
                     const impostores = jugadores.filter((_, i) => rolesPartida[i] === "___IMPOSTOR___");
                     htmlDesc += `<br><br>Impostor(es): <span style="color:var(--red); font-weight:bold;">${impostores.join(", ")}</span>`;
                 }
             }
             desc.innerHTML = htmlDesc;
-            
-            let botonesHTML = '';
-            // BOTÓN VER PERSONAJE PARA TODOS AL FINAL
-            botonesHTML += `<button class="btn-photo" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="abrirFotoModal('${personajePartida}')">📷 VER PERSONAJE SECRETO</button>`;
-
-            if(soyLider) { botonesHTML += '<button class="btn-main" onclick="reiniciarPartida()">🔄 JUGAR OTRA VEZ</button>'; } 
-            else { botonesHTML += '<p style="font-size:0.8rem; color:#aaa;">Esperando al capitán para reiniciar...</p>'; }
-            
-            document.getElementById('modalButtons').innerHTML = botonesHTML;
-            document.getElementById('modalOverlay').style.display = 'flex';
+            let botonesHTML = `<button class="btn-photo" style="margin-bottom:10px; width:100%; justify-content:center;" onclick="abrirFotoModal('${personajePartida}')">📷 VER PERSONAJE SECRETO</button>`;
+            if(soyLider) botonesHTML += '<button class="btn-main" onclick="reiniciarPartida()">🔄 JUGAR OTRA VEZ</button>'; else botonesHTML += '<p style="font-size:0.8rem; color:#aaa;">Esperando al capitán para reiniciar...</p>';
+            document.getElementById('modalButtons').innerHTML = botonesHTML; document.getElementById('modalOverlay').style.display = 'flex';
         }
 
         function mostrarPersonajeSecreto() { document.getElementById('secretCharacterDisplay').style.display = 'block'; document.getElementById('secretCharacterDisplay').innerText = personajePartida; document.getElementById('btnShowChar').style.display = 'none'; if (miRol !== "___IMPOSTOR___") document.getElementById('btnImgSecret').style.display = 'inline-flex'; }
         
-        // --- UTILS ---
         function cyrb128(str){let h1=1779033703,h2=3144134277,h3=1013904242,h4=2773480762;for(let i=0,k;i<str.length;i++){k=str.charCodeAt(i);h1=h2^Math.imul(h1^k,597399067);h2=h3^Math.imul(h2^k,2869860233);h3=h4^Math.imul(h3^k,951274213);h4=h1^Math.imul(h4^k,2716044179)}h1=Math.imul(h3^(h1>>>18),597399067);h2=Math.imul(h4^(h2>>>22),2869860233);h3=Math.imul(h1^(h3>>>17),951274213);h4=Math.imul(h2^(h4>>>19),2716044179);return[(h1^h2^h3^h4)>>>0,(h2^h3)>>>0,(h3^h4)>>>0,(h4^h1)>>>0]}
         function sfc32(a,b,c,d){return function(){a>>>=0;b>>>=0;c>>>=0;d>>>=0;var t=(a+b)|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);d=d+1|0;t=t+d|0;c=c+t|0;return(t>>>0)/4294967296}}
         function showToast(msg) { const x = document.getElementById("toast"); x.innerText = msg; x.className = "show"; setTimeout(()=>x.className=x.className.replace("show",""), 3000); }
         function copiarLink() { navigator.clipboard.writeText(window.location.href); showToast("Enlace copiado"); }
         function cerrarFotoModal() { document.getElementById('imgModal').style.display = 'none'; }
-        function closeModal() {
-            document.getElementById('modalOverlay').style.display = 'none';
-            if(document.getElementById('gameScreen').style.display !== 'none') {
-                document.getElementById('myCard').classList.add('disabled');
-                document.querySelector('.card-icon').innerText = "✅"; document.querySelector('.card-name').innerText = "ROL VISTO"; document.querySelector('.card-hint').innerText = "ESPERANDO VOTACIÓN...";
-            }
-        }
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; if(document.getElementById('gameScreen').style.display !== 'none') { document.getElementById('myCard').classList.add('disabled'); document.querySelector('.card-icon').innerText = "✅"; document.querySelector('.card-name').innerText = "ROL VISTO"; document.querySelector('.card-hint').innerText = "ESPERANDO VOTACIÓN..."; } }
         function resetCardVisual() { const c = document.getElementById('myCard'); c.classList.remove('disabled'); document.querySelector('.card-icon').innerText = "👆"; document.querySelector('.card-name').innerText = miNombre; document.querySelector('.card-hint').innerText = "TOCA PARA VER TU ROL"; }
         
         async function abrirFotoModal(nombre) {
-            const modal = document.getElementById('imgModal'); 
-            const img = document.getElementById('charImage'); 
-            const loader = document.getElementById('imgLoader'); 
-            const wantedName = document.getElementById('wantedName');
-            
-            modal.style.display = 'flex'; 
-            img.style.display = 'none'; 
-            loader.style.display = 'block';
-            
-            let displayName = nombre.split('(')[0].trim();
-            wantedName.innerText = displayName;
-
-            const correcciones = {
-                "Dragon": "Monkey D. Dragon", "King": "King One Piece", "Queen": "Queen One Piece",
-                "Jack": "Jack One Piece", "Kid": "Eustass Kid", "Law": "Trafalgar Law",
-                "Kuma": "Bartholomew Kuma", "Teach": "Marshall D. Teach", "Shirohige": "Edward Newgate",
-                "Kuro": "Kuro One Piece", "Killer": "Killer One Piece", "Caesar": "Caesar Clown", "Smoker": "Smoker One Piece"
-            };
-
-            const searchName = correcciones[displayName] || displayName;
-
+            const modal = document.getElementById('imgModal'); const img = document.getElementById('charImage'); const loader = document.getElementById('imgLoader'); const wantedName = document.getElementById('wantedName');
+            modal.style.display = 'flex'; img.style.display = 'none'; loader.style.display = 'block';
+            let displayName = nombre.split('(')[0].trim(); wantedName.innerText = displayName;
+            const searchName = displayName; 
             const query = `query ($search: String) { Page(perPage: 5) { characters(search: $search) { name { full } image { large } media(sort: POPULARITY_DESC) { nodes { title { romaji english } } } } } }`;
-            
             try {
                 const res = await fetch('https://graphql.anilist.co', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { search: searchName } }) });
                 const json = await res.json();
@@ -681,10 +553,7 @@
                 let best = chars.find(c => c.media.nodes.some(m => (m.title.romaji||"").includes("One Piece") || (m.title.english||"").includes("One Piece")))?.image.large;
                 if (!best && chars.length > 0) best = chars[0].image.large;
                 if(best) { img.src = best; img.onload = ()=>{ loader.style.display='none'; img.style.display='block'; }; } else { throw new Error(); }
-            } catch { 
-                loader.style.display='none'; showToast("Buscando en Google..."); 
-                window.open(`https://www.google.com/search?tbm=isch&q=One+Piece+${displayName}`, '_blank'); modal.style.display='none'; 
-            }
+            } catch { loader.style.display='none'; showToast("Buscando en Google..."); window.open(`https://www.google.com/search?tbm=isch&q=One+Piece+${displayName}`, '_blank'); modal.style.display='none'; }
         }
     </script>
 </body>
