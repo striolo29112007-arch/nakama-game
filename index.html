@@ -14,15 +14,22 @@
         
         input[type="text"] { text-transform: uppercase; }
 
+        /* HEADER ANIMADO (BARCO) */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 30px; perspective: 1000px; }
-        .header-logo { width: 220px; max-width: 60vw; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); animation: boatFloat 4s ease-in-out infinite; }
+        .header-logo { 
+            width: 220px; max-width: 60vw; height: auto; display: block; margin: 0 auto; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            animation: boatFloat 4s ease-in-out infinite; 
+        }
         @keyframes boatFloat { 0%, 100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-2deg) translateY(5px); } 75% { transform: rotate(2deg) translateY(-5px); } }
 
+        /* LAYOUT DIVIDIDO */
         #setupScreen { display: flex; flex-direction: row; gap: 20px; width: 100%; max-width: 900px !important; align-items: flex-start; }
         .setup-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
         .setup-right { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 15px; padding: 20px; height: 400px; display: flex; flex-direction: column; }
         @media (max-width: 768px) { #setupScreen { flex-direction: column; max-width: 400px !important; } .setup-right { width: 100%; height: auto; min-height: 250px; } }
 
+        /* SALAS PUBLICAS */
         .room-list-header { color: var(--blue); font-size: 0.9rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px solid var(--border); padding-bottom: 10px; letter-spacing: 1px; }
         .room-list-box { flex: 1; overflow-y: auto; padding-right: 5px; }
         .public-room-card { background: linear-gradient(90deg, #1e272e 0%, #252f38 100%); border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: space-between; align-items: center; animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -32,13 +39,13 @@
         .room-badge { background: var(--blue); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        .avatar-img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-right: 10px; border: 2px solid var(--gold); background: #0b1015; object-fit: cover; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
+        /* AVATARES LOCALES (SVG) */
+        .avatar-img { width: 45px; height: 45px; border-radius: 50%; vertical-align: middle; margin-right: 10px; border: 2px solid var(--gold); background: #0b1015; object-fit: cover; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
         .leader-aura { border: 2px solid var(--red) !important; box-shadow: 0 0 15px var(--red); animation: pulseAura 2s infinite; }
         @keyframes pulseAura { 0% { box-shadow: 0 0 5px var(--red); } 50% { box-shadow: 0 0 15px var(--red); } 100% { box-shadow: 0 0 5px var(--red); } }
-        .btn-change-avatar { background: var(--blue); color: white; padding: 4px 10px; font-size: 0.7rem; border-radius: 50px; width: auto; display: inline-block; cursor: pointer; border:none; margin-left: 10px; transition: 0.2s; }
-        .btn-change-avatar:hover { transform: scale(1.1); filter: brightness(1.2); }
         .vote-card .avatar-img { width: 60px; height: 60px; display: block; margin: 0 auto 10px; border-width: 3px; }
 
+        /* GENERAL UI */
         .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         #lobbyScreen, #gameScreen, #votingScreen { width: 100%; max-width: 400px; display: none; }
@@ -48,6 +55,7 @@
         button:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
         .btn-main { background: var(--red); color: white; } .btn-blue { background: var(--blue); color: white; }
         
+        /* CHAT */
         #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         #chat-btn:hover { transform: scale(1.1); }
         .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: none; align-items: center; justify-content: center; border: 2px solid #fff; animation: popIn 0.2s; }
@@ -66,6 +74,7 @@
         .msg-author { font-size: 0.7rem; font-weight: 800; margin-bottom: 4px; opacity: 0.8; display: block; text-transform: uppercase; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
+        /* RESTO */
         .player-list { list-style: none; padding: 0; margin: 0; background: #0b1015; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
         .player-item { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
         .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
@@ -201,28 +210,45 @@
     </div>
 
     <script>
+        // CONFIG
         const personajes = ["Luffy", "Zoro", "Nami", "Usopp", "Sanji", "Chopper", "Robin", "Franky", "Brook", "Jinbe", "Zeus", "Shanks", "Teach", "Buggy", "Shirohige", "Kaido", "Big Mom", "Roger", "Rayleigh", "Oden", "Akainu", "Kizaru", "Aokiji", "Fujitora", "Sengoku", "Garp", "Mihawk", "Crocodile", "Doflamingo", "Kuma", "Hancock", "Law", "Kid", "Killer", "Bonney", "Yamato", "Ace", "Marco", "Katakuri", "Sabo", "Dragon"];
 
-        function getAvatar(name, salt) {
-            const seed = name + (salt || ""); 
-            return `https://ui-avatars.com/api/?name=${name}&background=random&color=fff&size=128&bold=true&length=1&seed=${seed}`;
+        // GENERADOR DE AVATARES SVG LOCALES (Cero LAG, Cero 404)
+        function generarAvatarSVG(nombre) {
+            const inicial = nombre.charAt(0).toUpperCase();
+            const colores = ["#e74c3c", "#3498db", "#f1c40f", "#9b59b6", "#2ecc71", "#e67e22", "#1abc9c", "#34495e"];
+            let hash = 0;
+            for (let i = 0; i < nombre.length; i++) hash = nombre.charCodeAt(i) + ((hash << 5) - hash);
+            const color = colores[Math.abs(hash) % colores.length];
+            
+            // SVG encodeado en base64 para usar como imagen
+            const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="${color}"/>
+                <text x="50" y="65" font-family="Arial" font-size="50" fill="white" text-anchor="middle" font-weight="bold">${inicial}</text>
+            </svg>`;
+            return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
         }
 
-        let miAvatarSalt = localStorage.getItem('nakama_salt') || Math.random().toString();
         let miNombre = "", seedActual = "", gameSeed = "", jugadores = [], soyLider = false, miRol = "", personajePartida = "", pollingInterval = null, heVotado = false, chatOpen = false, lastMsgId = 0, currentReply = null;
 
         window.onload = () => {
             setTimeout(() => { document.getElementById('intro-loader').style.opacity='0'; setTimeout(()=>document.getElementById('intro-loader').style.display='none',800); }, 2000);
             const params = new URLSearchParams(window.location.search);
             if(params.get('room')) document.getElementById('seedInput').value = params.get('room').toUpperCase();
-            document.querySelectorAll('input[type="text"]').forEach(input => { input.addEventListener('input', () => { input.value = input.value.toUpperCase(); }); });
+            
+            // FORZAR MAYUSCULAS
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
+            });
+
             cargarNombreGuardado(); cargarSalas(); setInterval(cargarSalas, 5000);
         };
 
         function cargarNombreGuardado() { const s = localStorage.getItem('nakama_name'); if(s) { miNombre = s; document.getElementById('myPlayerName').style.display='none'; document.getElementById('savedNameBox').style.display='flex'; document.getElementById('displaySavedName').innerText = "HOLA, " + s; } }
         function cambiarNombre() { localStorage.removeItem('nakama_name'); location.reload(); }
 
-        // --- SALAS PUBLICAS ---
+        // SALAS PÚBLICAS (FIX: Siempre actualiza)
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display==='none') return;
             try {
@@ -230,22 +256,32 @@
                 if(res.ok) {
                     const rooms = await res.json();
                     const cont = document.getElementById('activeRooms');
-                    if(rooms.length === 0) { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; return; }
+                    
+                    if(rooms.length === 0) { 
+                        cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; 
+                        return; 
+                    }
                     
                     cont.innerHTML = "";
                     rooms.forEach((r, idx) => {
                         const card = document.createElement('div');
                         card.className = "public-room-card";
                         card.style.animationDelay = (idx * 0.1) + "s"; 
-                        card.innerHTML = `<div class="room-info"><h3>${r.room_code}</h3><span>EN LÍNEA</span></div><div class="room-badge">👥 ${r.count}</div>`;
+                        card.innerHTML = `
+                            <div class="room-info">
+                                <h3>${r.room_code}</h3>
+                                <span>EN LÍNEA</span>
+                            </div>
+                            <div class="room-badge">👥 ${r.count}</div>
+                        `;
                         card.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
                         cont.appendChild(card);
                     });
                 }
-            } catch(e) {}
+            } catch(e) { console.log("Conectando..."); }
         }
 
-        // --- CHAT ---
+        // CHAT
         function toggleChat() { chatOpen = !chatOpen; document.getElementById('chat-window').style.display = chatOpen ? 'flex' : 'none'; if(chatOpen) { document.getElementById('unread-badge').classList.remove('visible'); pollChat(); } }
         async function pollChat() {
             if(!seedActual) return;
@@ -257,13 +293,17 @@
                     container.innerHTML = "";
                     msgs.forEach(m => {
                         const isMe = m.player_name === miNombre;
-                        container.innerHTML += `<div class="msg ${isMe?'msg-me':'msg-other'}" onclick="setReply('${m.player_name}')"><span class="msg-author">${m.player_name}</span>${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6;">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
+                        container.innerHTML += `<div class="msg ${isMe?'msg-me':'msg-other'}" onclick="setReply('${m.player_name}')">
+                            <span class="msg-author">${m.player_name}</span>
+                            ${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6;">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
                     });
+                    
                     if(!chatOpen) {
-                        const unread = msgs.length - lastMsgId;
-                        if(unread > 0) {
-                            document.getElementById('unread-badge').innerText = unread > 9 ? "9+" : unread;
-                            document.getElementById('unread-badge').classList.add('visible');
+                        const unreadCount = msgs.length - lastMsgId;
+                        if(unreadCount > 0) {
+                            const badge = document.getElementById('unread-badge');
+                            badge.innerText = unreadCount > 9 ? "9+" : unreadCount;
+                            badge.classList.add('visible');
                         }
                     }
                     lastMsgId = msgs.length; container.scrollTop = container.scrollHeight;
@@ -278,7 +318,7 @@
             inp.value = ""; cancelReply(); pollChat();
         }
 
-        // --- CORE ---
+        // CORE
         async function unirseSala() {
             seedActual = document.getElementById('seedInput').value.trim().toUpperCase();
             if(!miNombre) miNombre = document.getElementById('myPlayerName').value.trim().toUpperCase();
@@ -290,7 +330,6 @@
         function irALobby() {
             document.getElementById('setupScreen').style.display='none'; document.getElementById('lobbyScreen').style.display='flex';
             document.getElementById('lobbyRoomName').innerText = seedActual; document.getElementById('chat-btn').style.display='flex';
-            // Aumentamos intervalo a 3s para no saturar el servidor gratis
             pollingInterval = setInterval(actualizarLobby, 3000);
         }
 
@@ -300,9 +339,10 @@
                 const data = await res.json(); if(data.restart) location.reload();
                 jugadores = data.players; soyLider = (data.leader === miNombre); gameSeed = data.seed;
                 
-                // Si el servidor dice started, cambiamos de pantalla
-                if(data.started && document.getElementById('gameScreen').style.display === 'none') iniciarJuego();
-                
+                if(data.started && document.getElementById('gameScreen').style.display === 'none') {
+                    iniciarJuego();
+                }
+
                 renderizarLista(data.leader); 
                 if(data.ejected) mostrarResultado(data.ejected); 
                 pollChat();
@@ -313,16 +353,16 @@
             const list = document.getElementById('onlinePlayerList'); list.innerHTML = "";
             jugadores.forEach(p => {
                 const isCap = p === leader;
-                const avatarUrl = getAvatar(p, (p === miNombre ? miAvatarSalt : ""));
-                const changeBtn = p === miNombre ? `<span class="btn-change-avatar" onclick="cambiarMiAvatar()">🔄 CAMBIAR</span>` : "";
+                // GENERAR AVATAR LOCALMENTE
+                const avatarUrl = generarAvatarSVG(p);
                 const kickBtn = (soyLider || miNombre === 'STRIOLO') && p !== miNombre ? `<span onclick="kickPlayer('${p}')" style="cursor:pointer; color:var(--red); font-weight:bold; margin-left:10px;">✕</span>` : "";
-                list.innerHTML += `<li class="player-item"><span><img src="${avatarUrl}" class="avatar-img ${isCap?'leader-aura':''}"> ${p} ${isCap?'👑':''} ${changeBtn}</span>${kickBtn}</li>`;
+                list.innerHTML += `<li class="player-item"><span><img src="${avatarUrl}" class="avatar-img ${isCap?'leader-aura':''}"> ${p} ${isCap?'👑':''}</span>${kickBtn}</li>`;
             });
             if(soyLider) { 
                 document.getElementById('adminSection').style.display='block'; 
-                const btn = document.getElementById('btnZarpar');
-                btn.innerText = "ZARPAR TODOS ⚓"; 
-                btn.classList.remove('disabled'); 
+                const btnZ = document.getElementById('btnZarpar');
+                btnZ.innerText = "ZARPAR TODOS ⚓"; 
+                btnZ.classList.remove('disabled'); 
             }
             if(soyLider || miNombre === 'STRIOLO') document.getElementById('btnClean').style.display='block';
         }
@@ -330,18 +370,16 @@
         async function comenzarPartida() { 
             if(soyLider) {
                 const btn = document.getElementById('btnZarpar');
-                btn.innerText = "INICIANDO..."; // Feedback visual inmediato
+                btn.innerText = "INICIANDO..."; 
                 try {
                     const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) });
                     if(!res.ok) throw new Error();
                 } catch(e) {
-                    showToast("ERROR DE CONEXIÓN - REINTENTA");
+                    showToast("REINTENTA EN 5 SEGUNDOS...");
                     btn.innerText = "ZARPAR TODOS ⚓";
                 }
             }
         }
-
-        function cambiarMiAvatar() { miAvatarSalt = Math.random().toString(); localStorage.setItem('nakama_salt', miAvatarSalt); renderizarLista(soyLider?miNombre:""); }
 
         function iniciarJuego() {
             document.getElementById('lobbyScreen').style.display='none'; document.getElementById('gameScreen').style.display='flex';
@@ -368,7 +406,7 @@
             document.getElementById('gameScreen').style.display='none'; document.getElementById('votingScreen').style.display='flex';
             const grid = document.getElementById('votingGrid'); grid.innerHTML = "";
             jugadores.forEach(p => {
-                const avatar = getAvatar(p, "");
+                const avatar = generarAvatarSVG(p);
                 grid.innerHTML += `<div class="vote-card" onclick="votar('${p}', this)" style="background:#252f38; border-radius:10px; padding:15px; text-align:center; cursor:pointer; border:2px solid transparent;"><img src="${avatar}" class="avatar-img" style="width:50px; height:50px; display:block; margin:0 auto 10px;">${p}</div>`;
             });
         }
@@ -397,6 +435,9 @@
         async function reiniciarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); else location.reload(); }
         async function kickPlayer(t) { if(confirm("¿ECHAR A " + t + "?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: t }) }); }
         
+        function gestionarResultado(data){const votes=data.votes||{};let maxV=0;Object.values(votes).forEach(v=>{if(v>maxV)maxV=v;});const tied=Object.keys(votes).filter(k=>votes[k]===maxV);if(tied.length>1&&!roulettePlayed){roulettePlayed=true;jugarRuleta(tied,data.ejected);}else if(tied.length===1||roulettePlayed){mostrarResultado(data.ejected);}}
+        function jugarRuleta(candidatos,perdedorReal){const screen=document.getElementById('roulette-screen');const wheel=document.getElementById('rouletteWheel');screen.style.display='flex';const palette=['#e74c3c','#3498db','#f1c40f','#9b59b6','#2ecc71','#e67e22'];let gradientStr="conic-gradient(";const step=360/candidatos.length;candidatos.forEach((c,i)=>{const color=palette[i%palette.length];gradientStr+=`${color} ${i*step}deg ${(i+1)*step}deg${i===candidatos.length-1?'':','}`;});gradientStr+=")";wheel.style.background=gradientStr;wheel.innerHTML="";candidatos.forEach((name,i)=>{const textContainer=document.createElement('div');textContainer.className='wheel-text';const angle=(i*step)+(step/2);textContainer.style.transform=`translate(-50%, -50%) rotate(${angle-90}deg)`;textContainer.innerHTML=`<span>${name}</span>`;wheel.appendChild(textContainer);});const winnerIndex=candidatos.indexOf(perdedorReal);const winnerAngle=(winnerIndex*step)+(step/2);const randomOffset=(Math.random()*(step*0.6))-(step*0.3);const targetRotation=1800+(360-winnerAngle)+randomOffset;requestAnimationFrame(()=>{setTimeout(()=>{wheel.style.transform=`rotate(${targetRotation}deg)`;setTimeout(()=>{confetti({particleCount:200,spread:90,origin:{y:0.6},colors:['#f1c40f','#e74c3c']});setTimeout(()=>{screen.style.display='none';mostrarResultado(perdedorReal);},2500);},5000);},100);});}
+
         function cyrb128(s){let h1=1779033703,h2=3144134277,h3=1013904242,h4=2773480762;for(let i=0,k;i<s.length;i++){k=s.charCodeAt(i);h1=h2^Math.imul(h1^k,597399067);h2=h3^Math.imul(h2^k,2869860233);h3=h4^Math.imul(h3^k,951274213);h4=h1^Math.imul(h4^k,2716044179)}return[h1>>>0,h2>>>0,h3>>>0,h4>>>0]}
         function sfc32(a,b,c,d){return function(){a>>>=0;b>>>=0;c>>>=0;d>>>=0;var t=(a+b)|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);d=d+1|0;t=t+d|0;c=c+t|0;return(t>>>0)/4294967296}}
     </script>
