@@ -12,76 +12,26 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: var(--text-main); overflow-x: hidden; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%); background-attachment: fixed; }
         
-        /* FUERZA MAYUSCULAS VISUALMENTE */
         input[type="text"] { text-transform: uppercase; }
 
-        /* HEADER ANIMADO (BARCO) */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 30px; perspective: 1000px; }
-        .header-logo { 
-            width: 220px; 
-            max-width: 60vw; 
-            height: auto; 
-            display: block; 
-            margin: 0 auto; 
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-            animation: boatFloat 4s ease-in-out infinite; 
-        }
-        @keyframes boatFloat {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            25% { transform: rotate(-2deg) translateY(5px); }
-            75% { transform: rotate(2deg) translateY(-5px); }
-        }
+        .header-logo { width: 220px; max-width: 60vw; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); animation: boatFloat 4s ease-in-out infinite; }
+        @keyframes boatFloat { 0%, 100% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-2deg) translateY(5px); } 75% { transform: rotate(2deg) translateY(-5px); } }
 
-        /* LAYOUT DIVIDIDO PARA SETUP SCREEN */
-        #setupScreen {
-            display: flex;
-            flex-direction: row; 
-            gap: 20px;
-            width: 100%;
-            max-width: 900px !important; 
-            align-items: flex-start;
-        }
+        #setupScreen { display: flex; flex-direction: row; gap: 20px; width: 100%; max-width: 900px !important; align-items: flex-start; }
         .setup-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .setup-right { 
-            flex: 1; 
-            background: rgba(0,0,0,0.2); 
-            border: 1px solid var(--border); 
-            border-radius: 15px; 
-            padding: 20px; 
-            height: 400px; 
-            display: flex; 
-            flex-direction: column;
-        }
-        @media (max-width: 768px) {
-            #setupScreen { flex-direction: column; max-width: 400px !important; }
-            .setup-right { width: 100%; height: auto; min-height: 250px; }
-        }
+        .setup-right { flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 15px; padding: 20px; height: 400px; display: flex; flex-direction: column; }
+        @media (max-width: 768px) { #setupScreen { flex-direction: column; max-width: 400px !important; } .setup-right { width: 100%; height: auto; min-height: 250px; } }
 
-        /* ESTILO SALAS PÚBLICAS */
         .room-list-header { color: var(--blue); font-size: 0.9rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px solid var(--border); padding-bottom: 10px; letter-spacing: 1px; }
         .room-list-box { flex: 1; overflow-y: auto; padding-right: 5px; }
-        
-        .public-room-card {
-            background: linear-gradient(90deg, #1e272e 0%, #252f38 100%);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--gold);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
+        .public-room-card { background: linear-gradient(90deg, #1e272e 0%, #252f38 100%); border-radius: 10px; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--gold); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; justify-content: space-between; align-items: center; animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .public-room-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-left-color: var(--blue); }
         .room-info h3 { margin: 0; color: white; font-size: 1.1rem; }
         .room-info span { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; }
         .room-badge { background: var(--blue); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-
         @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* AVATARES */
         .avatar-img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-right: 10px; border: 2px solid var(--gold); background: #0b1015; object-fit: cover; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
         .leader-aura { border: 2px solid var(--red) !important; box-shadow: 0 0 15px var(--red); animation: pulseAura 2s infinite; }
         @keyframes pulseAura { 0% { box-shadow: 0 0 5px var(--red); } 50% { box-shadow: 0 0 15px var(--red); } 100% { box-shadow: 0 0 5px var(--red); } }
@@ -89,49 +39,33 @@
         .btn-change-avatar:hover { transform: scale(1.1); filter: brightness(1.2); }
         .vote-card .avatar-img { width: 60px; height: 60px; display: block; margin: 0 auto 10px; border-width: 3px; }
 
-        /* GENERAL UI */
         .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         #lobbyScreen, #gameScreen, #votingScreen { width: 100%; max-width: 400px; display: none; }
-        
         input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; transition: 0.3s; }
         input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(241, 196, 15, 0.1); }
         button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
         button:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
-        .btn-main { background: var(--red); color: white; }
-        .btn-blue { background: var(--blue); color: white; }
+        .btn-main { background: var(--red); color: white; } .btn-blue { background: var(--blue); color: white; }
         
-        /* INTRO */
-        #intro-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s; }
-        .intro-logo-img { width: 220px; animation: floatInEpic 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
-        @keyframes floatInEpic { from { opacity: 0; transform: scale(0.8) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-        /* CHAT MODERNO */
         #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         #chat-btn:hover { transform: scale(1.1); }
         .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: none; align-items: center; justify-content: center; border: 2px solid #fff; animation: popIn 0.2s; }
         .chat-badge.visible { display: flex; }
-        
         #chat-window { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px; background: var(--chat-bg); backdrop-filter: blur(15px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
         .chat-header { padding: 15px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border); font-weight: 900; display: flex; justify-content: space-between; align-items: center; color: var(--gold); letter-spacing: 1px; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; }
-        
         .chat-input-area { padding: 12px; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border); display: flex; gap: 8px; flex-direction: column; }
         .chat-input { flex: 1; background: #0b1015; border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: white; outline: none; font-size: 0.9rem; }
         .chat-send { background: var(--blue); border: none; width: 45px; height: 45px; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        
         .reply-context { font-size: 0.75rem; color: var(--gold); padding: 8px; background: rgba(241, 196, 15, 0.1); border-left: 3px solid var(--gold); border-radius: 4px; margin-bottom: 5px; display: none; justify-content: space-between; align-items: center; cursor: pointer; }
-        
         .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; animation: popIn 0.3s; cursor: pointer; position: relative; }
         .msg-me { align-self: flex-end; background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%); color: #1e272e; border-bottom-right-radius: 4px; font-weight: 600; }
         .msg-other { align-self: flex-start; background: #2f3640; color: white; border-bottom-left-radius: 4px; border: 1px solid #353b48; }
         .msg-author { font-size: 0.7rem; font-weight: 800; margin-bottom: 4px; opacity: 0.8; display: block; text-transform: uppercase; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* RESTO */
         .player-list { list-style: none; padding: 0; margin: 0; background: #0b1015; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
         .player-item { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
         .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
@@ -142,7 +76,6 @@
         .ocean { height: 100px; width: 100%; position: absolute; bottom: 0; left: 0; z-index: -1; overflow: hidden; }
         .wave { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 198'%3E%3Cpath fill='%232c3e50' d='M1600 198H0V0h0c266.7 0 266.7 42 533.3 42S800 0 1066.7 0 1333.3 42 1600 42z'/%3E%3C/svg%3E") repeat-x; position: absolute; width: 6400px; height: 198px; bottom: -60px; opacity: 0.3; animation: wave 10s infinite linear; }
         @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
-        /* RULETA */
         #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 21, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .roulette-title { color: var(--gold); font-size: 2.5rem; margin-bottom: 30px; text-transform: uppercase; font-weight: 900; text-shadow: 0 4px 0 #000; }
         .roulette-container { position: relative; width: 340px; height: 340px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6)); }
@@ -151,16 +84,14 @@
         .wheel-text span { color: white; font-weight: 900; font-size: 1.1rem; text-shadow: 2px 2px 2px rgba(0,0,0,0.9); text-transform: uppercase; white-space: nowrap; }
         .roulette-hub { position: absolute; width: 60px; height: 60px; background: #2c3e50; border: 4px solid var(--gold); border-radius: 50%; z-index: 10; box-shadow: 0 0 15px black; display: flex; align-items: center; justify-content: center; font-size: 25px; }
         .roulette-pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 20; width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-top: 50px solid #ecf0f1; filter: drop-shadow(0 6px 4px rgba(0,0,0,0.4)); }
-        /* RESTO */
         .vote-card { background: #252f38; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        #intro-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s; }
+        .intro-logo-img { width: 220px; animation: floatInEpic 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
     </style>
 </head>
 <body>
 
-    <div id="intro-loader">
-        <div class="intro-content-box"><img src="jolly.png" class="intro-logo-img" alt="Logo"></div>
-    </div>
-
+    <div id="intro-loader"><img src="jolly.png" class="intro-logo-img" alt="Logo"></div>
     <div id="toast"></div>
 
     <div id="chat-btn" onclick="toggleChat()">💬<div id="unread-badge" class="chat-badge">0</div></div>
@@ -270,13 +201,9 @@
     </div>
 
     <script>
-        // CONFIG
         const personajes = ["Luffy", "Zoro", "Nami", "Usopp", "Sanji", "Chopper", "Robin", "Franky", "Brook", "Jinbe", "Zeus", "Shanks", "Teach", "Buggy", "Shirohige", "Kaido", "Big Mom", "Roger", "Rayleigh", "Oden", "Akainu", "Kizaru", "Aokiji", "Fujitora", "Sengoku", "Garp", "Mihawk", "Crocodile", "Doflamingo", "Kuma", "Hancock", "Law", "Kid", "Killer", "Bonney", "Yamato", "Ace", "Marco", "Katakuri", "Sabo", "Dragon"];
 
-        // GENERADOR DE AVATARES DE COLORES (SIN ERRORES 404)
-        // Usamos UI Avatars API que es 100% fiable para generar iconos con iniciales y colores.
         function getAvatar(name, salt) {
-            // El 'salt' nos permite cambiar el color aunque el nombre sea el mismo
             const seed = name + (salt || ""); 
             return `https://ui-avatars.com/api/?name=${name}&background=random&color=fff&size=128&bold=true&length=1&seed=${seed}`;
         }
@@ -288,19 +215,14 @@
             setTimeout(() => { document.getElementById('intro-loader').style.opacity='0'; setTimeout(()=>document.getElementById('intro-loader').style.display='none',800); }, 2000);
             const params = new URLSearchParams(window.location.search);
             if(params.get('room')) document.getElementById('seedInput').value = params.get('room').toUpperCase();
-            
-            // FORZAR MAYUSCULAS
-            document.querySelectorAll('input[type="text"]').forEach(input => {
-                input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
-            });
-
+            document.querySelectorAll('input[type="text"]').forEach(input => { input.addEventListener('input', () => { input.value = input.value.toUpperCase(); }); });
             cargarNombreGuardado(); cargarSalas(); setInterval(cargarSalas, 5000);
         };
 
         function cargarNombreGuardado() { const s = localStorage.getItem('nakama_name'); if(s) { miNombre = s; document.getElementById('myPlayerName').style.display='none'; document.getElementById('savedNameBox').style.display='flex'; document.getElementById('displaySavedName').innerText = "HOLA, " + s; } }
         function cambiarNombre() { localStorage.removeItem('nakama_name'); location.reload(); }
 
-        // SALAS PÚBLICAS MEJORADAS (SIN BUCLE DE ANIMACIÓN Y SIN CACHÉ QUE BLOQUEE)
+        // --- SALAS PUBLICAS ---
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display==='none') return;
             try {
@@ -308,33 +230,22 @@
                 if(res.ok) {
                     const rooms = await res.json();
                     const cont = document.getElementById('activeRooms');
+                    if(rooms.length === 0) { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; return; }
                     
-                    if(rooms.length === 0) { 
-                        cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; 
-                        return; 
-                    }
-                    
-                    // Renderizado completo para evitar errores de actualización
                     cont.innerHTML = "";
                     rooms.forEach((r, idx) => {
                         const card = document.createElement('div');
                         card.className = "public-room-card";
                         card.style.animationDelay = (idx * 0.1) + "s"; 
-                        card.innerHTML = `
-                            <div class="room-info">
-                                <h3>${r.room_code}</h3>
-                                <span>EN LÍNEA</span>
-                            </div>
-                            <div class="room-badge">👥 ${r.count}</div>
-                        `;
+                        card.innerHTML = `<div class="room-info"><h3>${r.room_code}</h3><span>EN LÍNEA</span></div><div class="room-badge">👥 ${r.count}</div>`;
                         card.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
                         cont.appendChild(card);
                     });
                 }
-            } catch(e) { console.log("Reintentando conexión..."); }
+            } catch(e) {}
         }
 
-        // CHAT
+        // --- CHAT ---
         function toggleChat() { chatOpen = !chatOpen; document.getElementById('chat-window').style.display = chatOpen ? 'flex' : 'none'; if(chatOpen) { document.getElementById('unread-badge').classList.remove('visible'); pollChat(); } }
         async function pollChat() {
             if(!seedActual) return;
@@ -346,18 +257,13 @@
                     container.innerHTML = "";
                     msgs.forEach(m => {
                         const isMe = m.player_name === miNombre;
-                        container.innerHTML += `<div class="msg ${isMe?'msg-me':'msg-other'}" onclick="setReply('${m.player_name}')">
-                            <span class="msg-author">${m.player_name}</span>
-                            ${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6;">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
+                        container.innerHTML += `<div class="msg ${isMe?'msg-me':'msg-other'}" onclick="setReply('${m.player_name}')"><span class="msg-author">${m.player_name}</span>${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6;">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
                     });
-                    
-                    // Lógica de burbuja mejorada
                     if(!chatOpen) {
-                        const unreadCount = msgs.length - lastMsgId;
-                        if(unreadCount > 0) {
-                            const badge = document.getElementById('unread-badge');
-                            badge.innerText = unreadCount > 9 ? "9+" : unreadCount;
-                            badge.classList.add('visible');
+                        const unread = msgs.length - lastMsgId;
+                        if(unread > 0) {
+                            document.getElementById('unread-badge').innerText = unread > 9 ? "9+" : unread;
+                            document.getElementById('unread-badge').classList.add('visible');
                         }
                     }
                     lastMsgId = msgs.length; container.scrollTop = container.scrollHeight;
@@ -372,7 +278,7 @@
             inp.value = ""; cancelReply(); pollChat();
         }
 
-        // CORE
+        // --- CORE ---
         async function unirseSala() {
             seedActual = document.getElementById('seedInput').value.trim().toUpperCase();
             if(!miNombre) miNombre = document.getElementById('myPlayerName').value.trim().toUpperCase();
@@ -384,7 +290,8 @@
         function irALobby() {
             document.getElementById('setupScreen').style.display='none'; document.getElementById('lobbyScreen').style.display='flex';
             document.getElementById('lobbyRoomName').innerText = seedActual; document.getElementById('chat-btn').style.display='flex';
-            pollingInterval = setInterval(actualizarLobby, 2000);
+            // Aumentamos intervalo a 3s para no saturar el servidor gratis
+            pollingInterval = setInterval(actualizarLobby, 3000);
         }
 
         async function actualizarLobby() {
@@ -393,11 +300,9 @@
                 const data = await res.json(); if(data.restart) location.reload();
                 jugadores = data.players; soyLider = (data.leader === miNombre); gameSeed = data.seed;
                 
-                // IMPORTANTÍSIMO: SI EL SERVIDOR DICE QUE YA EMPEZÓ, CAMBIAMOS DE PANTALLA
-                if(data.started && document.getElementById('gameScreen').style.display === 'none') {
-                    iniciarJuego();
-                }
-
+                // Si el servidor dice started, cambiamos de pantalla
+                if(data.started && document.getElementById('gameScreen').style.display === 'none') iniciarJuego();
+                
                 renderizarLista(data.leader); 
                 if(data.ejected) mostrarResultado(data.ejected); 
                 pollChat();
@@ -408,7 +313,6 @@
             const list = document.getElementById('onlinePlayerList'); list.innerHTML = "";
             jugadores.forEach(p => {
                 const isCap = p === leader;
-                // Generar avatar coloreado basado en nombre
                 const avatarUrl = getAvatar(p, (p === miNombre ? miAvatarSalt : ""));
                 const changeBtn = p === miNombre ? `<span class="btn-change-avatar" onclick="cambiarMiAvatar()">🔄 CAMBIAR</span>` : "";
                 const kickBtn = (soyLider || miNombre === 'STRIOLO') && p !== miNombre ? `<span onclick="kickPlayer('${p}')" style="cursor:pointer; color:var(--red); font-weight:bold; margin-left:10px;">✕</span>` : "";
@@ -416,31 +320,28 @@
             });
             if(soyLider) { 
                 document.getElementById('adminSection').style.display='block'; 
-                const btnZ = document.getElementById('btnZarpar');
-                btnZ.innerText = "ZARPAR TODOS ⚓"; 
-                btnZ.classList.remove('disabled'); 
+                const btn = document.getElementById('btnZarpar');
+                btn.innerText = "ZARPAR TODOS ⚓"; 
+                btn.classList.remove('disabled'); 
             }
             if(soyLider || miNombre === 'STRIOLO') document.getElementById('btnClean').style.display='block';
         }
 
-        // Manejo de Errores para Botón Zarpar
         async function comenzarPartida() { 
             if(soyLider) {
+                const btn = document.getElementById('btnZarpar');
+                btn.innerText = "INICIANDO..."; // Feedback visual inmediato
                 try {
                     const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) });
-                    if(!res.ok) throw new Error("Error en servidor");
+                    if(!res.ok) throw new Error();
                 } catch(e) {
-                    showToast("❌ ERROR DE CONEXIÓN CON SERVIDOR");
+                    showToast("ERROR DE CONEXIÓN - REINTENTA");
+                    btn.innerText = "ZARPAR TODOS ⚓";
                 }
             }
         }
 
-        function cambiarMiAvatar() { 
-            // Cambia el 'salt' para generar un nuevo color aleatorio
-            miAvatarSalt = Math.random().toString();
-            localStorage.setItem('nakama_salt', miAvatarSalt); 
-            renderizarLista(soyLider?miNombre:""); 
-        }
+        function cambiarMiAvatar() { miAvatarSalt = Math.random().toString(); localStorage.setItem('nakama_salt', miAvatarSalt); renderizarLista(soyLider?miNombre:""); }
 
         function iniciarJuego() {
             document.getElementById('lobbyScreen').style.display='none'; document.getElementById('gameScreen').style.display='flex';
@@ -493,13 +394,9 @@
         function showToast(m) { const x = document.getElementById("toast"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
         function copiarLink() { const url = new URL(window.location.href); url.searchParams.set('room', seedActual); navigator.clipboard.writeText(url.toString()); showToast("🔗 ENLACE COPIADO"); }
         async function limpiarSala() { if(confirm("¿Borrar sala?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); }
-        async function comenzarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) }); }
         async function reiniciarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); else location.reload(); }
         async function kickPlayer(t) { if(confirm("¿ECHAR A " + t + "?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: t }) }); }
         
-        function gestionarResultado(data){const votes=data.votes||{};let maxV=0;Object.values(votes).forEach(v=>{if(v>maxV)maxV=v;});const tied=Object.keys(votes).filter(k=>votes[k]===maxV);if(tied.length>1&&!roulettePlayed){roulettePlayed=true;jugarRuleta(tied,data.ejected);}else if(tied.length===1||roulettePlayed){mostrarResultado(data.ejected);}}
-        function jugarRuleta(candidatos,perdedorReal){const screen=document.getElementById('roulette-screen');const wheel=document.getElementById('rouletteWheel');screen.style.display='flex';const palette=['#e74c3c','#3498db','#f1c40f','#9b59b6','#2ecc71','#e67e22'];let gradientStr="conic-gradient(";const step=360/candidatos.length;candidatos.forEach((c,i)=>{const color=palette[i%palette.length];gradientStr+=`${color} ${i*step}deg ${(i+1)*step}deg${i===candidatos.length-1?'':','}`;});gradientStr+=")";wheel.style.background=gradientStr;wheel.innerHTML="";candidatos.forEach((name,i)=>{const textContainer=document.createElement('div');textContainer.className='wheel-text';const angle=(i*step)+(step/2);textContainer.style.transform=`translate(-50%, -50%) rotate(${angle-90}deg)`;textContainer.innerHTML=`<span>${name}</span>`;wheel.appendChild(textContainer);});const winnerIndex=candidatos.indexOf(perdedorReal);const winnerAngle=(winnerIndex*step)+(step/2);const randomOffset=(Math.random()*(step*0.6))-(step*0.3);const targetRotation=1800+(360-winnerAngle)+randomOffset;requestAnimationFrame(()=>{setTimeout(()=>{wheel.style.transform=`rotate(${targetRotation}deg)`;setTimeout(()=>{confetti({particleCount:200,spread:90,origin:{y:0.6},colors:['#f1c40f','#e74c3c']});setTimeout(()=>{screen.style.display='none';mostrarResultado(perdedorReal);},2500);},5000);},100);});}
-
         function cyrb128(s){let h1=1779033703,h2=3144134277,h3=1013904242,h4=2773480762;for(let i=0,k;i<s.length;i++){k=s.charCodeAt(i);h1=h2^Math.imul(h1^k,597399067);h2=h3^Math.imul(h2^k,2869860233);h3=h4^Math.imul(h3^k,951274213);h4=h1^Math.imul(h4^k,2716044179)}return[h1>>>0,h2>>>0,h3>>>0,h4>>>0]}
         function sfc32(a,b,c,d){return function(){a>>>=0;b>>>=0;c>>>=0;d>>>=0;var t=(a+b)|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);d=d+1|0;t=t+d|0;c=c+t|0;return(t>>>0)/4294967296}}
     </script>
