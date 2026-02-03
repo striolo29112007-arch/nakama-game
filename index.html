@@ -18,8 +18,8 @@
         /* HEADER ANIMADO (BARCO) */
         .header-container { text-align: center; margin-top: 10px; margin-bottom: 30px; perspective: 1000px; }
         .header-logo { 
-            width: 280px; /* Tamaño controlado */
-            max-width: 80%; 
+            width: 280px; /* Tamaño base PC */
+            max-width: 60vw; /* En móvil nunca ocupará más del 60% del ancho */
             height: auto; 
             display: block; 
             margin: 0 auto; 
@@ -69,7 +69,7 @@
             margin-bottom: 10px;
             border-left: 4px solid var(--gold);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -77,6 +77,8 @@
             animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         .public-room-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-left-color: var(--blue); }
+        .public-room-card.removing { opacity: 0; transform: translateX(20px); pointer-events: none; } /* Clase para borrado suave */
+
         .room-info h3 { margin: 0; color: white; font-size: 1.1rem; }
         .room-info span { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; }
         .room-badge { background: var(--blue); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
@@ -112,8 +114,8 @@
         /* CHAT */
         #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
         #chat-btn:hover { transform: scale(1.1); }
-        .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .chat-badge.visible { transform: scale(1); }
+        .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; opacity: 0; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .chat-badge.visible { opacity: 1; transform: scale(1); }
         #chat-window { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px; background: var(--chat-bg); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .chat-header { padding: 15px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
@@ -129,7 +131,7 @@
         @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
         /* RESTO */
-        .player-list { list-style: none; padding: 0; margin: 0; background: #0b1015; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .player-list { list-style: none; padding: 0; margin: 0; background: #0b1015; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
         .player-item { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
         .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         #charImage { width: 100%; height: 220px; object-fit: cover; background: #000; }
@@ -148,12 +150,14 @@
         .wheel-text span { color: white; font-weight: 900; font-size: 1.1rem; text-shadow: 2px 2px 2px rgba(0,0,0,0.9); text-transform: uppercase; white-space: nowrap; }
         .roulette-hub { position: absolute; width: 60px; height: 60px; background: #2c3e50; border: 4px solid var(--gold); border-radius: 50%; z-index: 10; box-shadow: 0 0 15px black; display: flex; align-items: center; justify-content: center; font-size: 25px; }
         .roulette-pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 20; width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-top: 50px solid #ecf0f1; filter: drop-shadow(0 6px 4px rgba(0,0,0,0.4)); }
+        /* RESTO */
+        .vote-card { background: #252f38; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
     </style>
 </head>
 <body>
 
     <div id="intro-loader">
-        <div class="intro-content-box"><img src="jolly.png" class="intro-logo-img"></div>
+        <div class="intro-content-box"><img src="jolly.png" class="intro-logo-img" alt="Logo"></div>
     </div>
 
     <div id="toast"></div>
@@ -163,7 +167,7 @@
         <div class="chat-header"><span>CHAT NAKAMA</span><span onclick="toggleChat()" style="cursor:pointer">▼</span></div>
         <div id="chat-messages" class="chat-messages"></div>
         <div class="chat-input-area">
-            <div id="reply-context" class="reply-context" onclick="cancelReply()"><span>Respondiendo...</span><span>✕</span></div>
+            <div id="reply-context" class="reply-context" onclick="cancelReply()" style="display:none"><span>Respondiendo...</span><span>✕</span></div>
             <div class="input-row" style="display:flex; gap:5px">
                 <input type="text" id="chat-input" class="chat-input" placeholder="Escribe...">
                 <button class="chat-send" onclick="sendChatMessage()">➤</button>
@@ -171,26 +175,14 @@
         </div>
     </div>
 
-    <div id="roulette-screen">
-        <div class="roulette-title">¡EMPATE!</div>
-        <div class="roulette-container">
-            <div class="roulette-pointer"></div>
-            <div class="roulette-wheel" id="rouletteWheel"></div>
-            <div class="roulette-hub">☠️</div>
-        </div>
-        <p style="color:#aaa; margin-top:30px; font-weight:bold;">La suerte decidirá...</p>
-    </div>
-
-    <div class="ocean"><div class="wave"></div></div>
-
     <div class="header-container" id="mainHeader">
         <img src="logo.png" class="header-logo" alt="Logo Nakama Sync">
     </div>
 
-    <div id="setupScreen" class="container" style="display:flex;">
-        <div class="setup-left">
-            <h2 style="color:var(--gold); margin-top:0;">ZARPAR AL MAR</h2>
-            <div class="input-group">
+    <div id="setupScreen" class="container">
+        <div class="setup-main">
+            <h2 style="color:var(--gold); margin:0;">ZARPAR AL MAR</h2>
+            <div>
                 <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px;">CÓDIGO DE SALA</label>
                 <input type="text" id="seedInput" placeholder="EJ: WANO">
             </div>
@@ -247,6 +239,18 @@
         <button class="btn-blue" style="margin-top:20px;" onclick="location.reload()">🏠 SALIR</button>
     </div>
 
+    <div id="roulette-screen">
+        <div class="roulette-title">¡EMPATE!</div>
+        <div class="roulette-container">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel"></div>
+            <div class="roulette-hub">☠️</div>
+        </div>
+        <p style="color:#aaa; margin-top:30px; font-weight:bold;">La suerte decidirá...</p>
+    </div>
+
+    <div class="ocean"><div class="wave"></div></div>
+
     <div id="imgModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:7000; display:none; align-items:center; justify-content:center;">
         <div class="wanted-paper">
             <span style="position:absolute; top:-15px; right:-15px; background:var(--red); color:white; width:35px; height:35px; border-radius:50%; text-align:center; line-height:35px; cursor:pointer;" onclick="document.getElementById('imgModal').style.display='none'">✕</span>
@@ -265,14 +269,14 @@
     </div>
 
     <script>
-        // CONFIG
+        // CONFIG - AVATARES ESTABLES (SIN 404)
         const avatares = [
-            "https://img.vavel.com/luffy-one-piece-1-1692261685711.jpg",
-            "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/11/one-piece-zoro-2868843.jpg",
-            "https://static1.srcdn.com/wordpress/wp-content/uploads/2023/10/one-piece-nami-shanks.jpg",
-            "https://p2.trrsf.com/image/fget/cf/1200/1200/middle/images.terra.com/2023/09/06/1109968412-one-piece-usopp.jpg",
-            "https://cdn.portalatento.com.br/atento/uploads/noticia/capa/2023/10/sanji-one-piece-manga-animes-1024x576.jpg",
-            "https://m.media-amazon.com/images/M/MV5BMmM0Zjk5NzUtOTljYy00MTBmLTlkZTEtYmQxYzg0YTM5ZTk2XkEyXkFqcGc@._V1_QL75_UX500_CR0,47,500,281_.jpg"
+            "https://static.wikia.nocookie.net/onepiece/images/6/6d/Monkey_D._Luffy_Anime_Post_Timeskip_Infobox.png", // Luffy
+            "https://static.wikia.nocookie.net/onepiece/images/5/52/Roronoa_Zoro_Anime_Post_Timeskip_Infobox.png", // Zoro
+            "https://static.wikia.nocookie.net/onepiece/images/d/d1/Nami_Anime_Post_Timeskip_Infobox.png", // Nami
+            "https://static.wikia.nocookie.net/onepiece/images/f/f6/Usopp_Anime_Post_Timeskip_Infobox.png", // Usopp
+            "https://static.wikia.nocookie.net/onepiece/images/6/66/Sanji_Anime_Post_Timeskip_Infobox.png", // Sanji
+            "https://static.wikia.nocookie.net/onepiece/images/b/b3/Tony_Tony_Chopper_Anime_Post_Timeskip_Infobox.png" // Chopper
         ];
         const personajes = ["Luffy", "Zoro", "Nami", "Usopp", "Sanji", "Chopper", "Robin", "Franky", "Brook", "Jinbe", "Zeus", "Shanks", "Teach", "Buggy", "Shirohige", "Kaido", "Big Mom", "Roger", "Rayleigh", "Oden", "Akainu", "Kizaru", "Aokiji", "Fujitora", "Sengoku", "Garp", "Mihawk", "Crocodile", "Doflamingo", "Kuma", "Hancock", "Law", "Kid", "Killer", "Bonney", "Yamato", "Ace", "Marco", "Katakuri", "Sabo", "Dragon"];
 
@@ -295,31 +299,36 @@
         function cargarNombreGuardado() { const s = localStorage.getItem('nakama_name'); if(s) { miNombre = s; document.getElementById('myPlayerName').style.display='none'; document.getElementById('savedNameBox').style.display='flex'; document.getElementById('displaySavedName').innerText = "HOLA, " + s; } }
         function cambiarNombre() { localStorage.removeItem('nakama_name'); location.reload(); }
 
-        // SALAS PÚBLICAS MEJORADAS
+        // SALAS PÚBLICAS MEJORADAS (SIN BUCLE DE ANIMACIÓN)
         async function cargarSalas() {
             if(document.getElementById('setupScreen').style.display==='none') return;
-            const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
-            if(res.ok) {
-                const rooms = await res.json();
-                const cont = document.getElementById('activeRooms');
-                if(rooms.length === 0) { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; return; }
-                
-                cont.innerHTML = "";
-                rooms.forEach((r, idx) => {
-                    const card = document.createElement('div');
-                    card.className = "public-room-card";
-                    card.style.animationDelay = (idx * 0.1) + "s"; // Escalera de animaciones
-                    card.innerHTML = `
-                        <div class="room-info">
-                            <h3>${r.room_code}</h3>
-                            <span>EN LÍNEA</span>
-                        </div>
-                        <div class="room-badge">👥 ${r.count}</div>
-                    `;
-                    card.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
-                    cont.appendChild(card);
-                });
-            }
+            try {
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
+                if(res.ok) {
+                    const rooms = await res.json();
+                    const cont = document.getElementById('activeRooms');
+                    if(rooms.length === 0) { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; return; }
+                    
+                    // Solo renderizamos si hay cambios reales para evitar parpadeos
+                    if(cont.childElementCount !== rooms.length) {
+                        cont.innerHTML = "";
+                        rooms.forEach((r, idx) => {
+                            const card = document.createElement('div');
+                            card.className = "public-room-card";
+                            card.style.animationDelay = (idx * 0.1) + "s"; // Escalera de animaciones
+                            card.innerHTML = `
+                                <div class="room-info">
+                                    <h3>${r.room_code}</h3>
+                                    <span>EN LÍNEA</span>
+                                </div>
+                                <div class="room-badge">👥 ${r.count}</div>
+                            `;
+                            card.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
+                            cont.appendChild(card);
+                        });
+                    }
+                }
+            } catch(e) { console.log("Error cargando salas, reintentando..."); }
         }
 
         // CHAT
@@ -367,11 +376,13 @@
         }
 
         async function actualizarLobby() {
-            const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'get', room: seedActual, player: miNombre }) });
-            const data = await res.json(); if(data.restart) location.reload();
-            jugadores = data.players; soyLider = (data.leader === miNombre); gameSeed = data.seed;
-            renderizarLista(data.leader); if(data.started && document.getElementById('gameScreen').style.display === 'none') iniciarJuego();
-            if(data.ejected) mostrarResultado(data.ejected); pollChat();
+            try {
+                const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'get', room: seedActual, player: miNombre }) });
+                const data = await res.json(); if(data.restart) location.reload();
+                jugadores = data.players; soyLider = (data.leader === miNombre); gameSeed = data.seed;
+                renderizarLista(data.leader); if(data.started && document.getElementById('gameScreen').style.display === 'none') iniciarJuego();
+                if(data.ejected) mostrarResultado(data.ejected); pollChat();
+            } catch(e) {}
         }
 
         function renderizarLista(leader) {
