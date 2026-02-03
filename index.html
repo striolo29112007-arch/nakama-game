@@ -7,78 +7,153 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* --- VARIABLES Y RESET --- */
         :root { --bg-top:#0f2027; --bg-bot:#203a43; --card-bg:#151b24; --text-main:#ecf0f1; --text-muted:#95a5a6; --gold:#f1c40f; --red:#ff4757; --blue:#3742fa; --chat-bg: rgba(21, 27, 36, 0.95); --border:#2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: var(--text-main); overflow-x: hidden; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%); background-attachment: fixed; }
         
-        /* FUERZA MAYUSCULAS EN INPUTS */
+        /* FUERZA MAYUSCULAS VISUALMENTE */
         input[type="text"] { text-transform: uppercase; }
 
-        /* AVATARES */
-        .avatar-img { width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 10px; border: 2px solid var(--gold); background: #0b1015; object-fit: cover; }
-        .leader-aura { border: 2px solid var(--red) !important; box-shadow: 0 0 10px var(--red); }
-        .btn-change-avatar { background: var(--blue); color: white; padding: 4px 8px; font-size: 0.6rem; border-radius: 50px; width: auto; display: inline-block; cursor: pointer; border:none; box-shadow:none; transition: transform 0.2s; }
-        .btn-change-avatar:hover { transform: scale(1.1); }
+        /* HEADER ANIMADO (BARCO) */
+        .header-container { text-align: center; margin-top: 10px; margin-bottom: 30px; perspective: 1000px; }
+        .header-logo { 
+            width: 280px; /* Tamaño controlado */
+            max-width: 80%; 
+            height: auto; 
+            display: block; 
+            margin: 0 auto; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            animation: boatFloat 4s ease-in-out infinite; /* Animación Ola */
+        }
+        @keyframes boatFloat {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(-2deg) translateY(5px); }
+            75% { transform: rotate(2deg) translateY(-5px); }
+        }
 
-        /* INTRO */
-        #intro-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; opacity: 1; transition: opacity 0.8s ease-in-out, visibility 0.8s; }
-        .intro-logo-img { width: 200px; animation: floatInEpic 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
-        @keyframes floatInEpic { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+        /* LAYOUT DIVIDIDO PARA SETUP SCREEN */
+        #setupScreen {
+            display: flex;
+            flex-direction: row; /* Lado a lado en PC */
+            gap: 20px;
+            width: 100%;
+            max-width: 900px !important; /* Más ancho para caber las dos columnas */
+            align-items: flex-start;
+        }
+        .setup-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .setup-right { 
+            flex: 1; 
+            background: rgba(0,0,0,0.2); 
+            border: 1px solid var(--border); 
+            border-radius: 15px; 
+            padding: 20px; 
+            height: 400px; /* Altura fija con scroll */
+            display: flex; 
+            flex-direction: column;
+        }
+        /* En móvil, uno debajo del otro */
+        @media (max-width: 768px) {
+            #setupScreen { flex-direction: column; max-width: 400px !important; }
+            .setup-right { width: 100%; height: auto; min-height: 250px; }
+        }
 
-        /* RULETA */
-        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 21, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .roulette-wheel { width: 340px; height: 340px; border-radius: 50%; border: 10px solid #5a4033; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 0 0 5px var(--gold); position: relative; overflow: hidden; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
-
-        /* CHAT */
-        #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
-        #chat-window { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px; background: var(--chat-bg); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* SETUP SCREEN & PUBLIC ROOMS */
-        #setupScreen { display: flex; flex-direction: row; gap: 30px; width: 100%; max-width: 900px !important; align-items: flex-start; }
-        .setup-main { flex: 1.2; display: flex; flex-direction: column; gap: 20px; }
-        .setup-side { flex: 0.8; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 20px; border: 1px solid var(--border); min-height: 400px; }
-        @media (max-width: 768px) { #setupScreen { flex-direction: column; align-items: center; } .setup-side { width: 100%; min-height: auto; } }
-
-        .public-room-item { 
-            background: #1e272e; padding: 15px; margin-bottom: 12px; border-radius: 12px; 
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--blue); cursor: pointer;
-            transition: all 0.3s ease;
+        /* ESTILO SALAS PÚBLICAS */
+        .room-list-header { color: var(--blue); font-size: 0.9rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase; border-bottom: 2px solid var(--border); padding-bottom: 10px; letter-spacing: 1px; }
+        .room-list-box { flex: 1; overflow-y: auto; padding-right: 5px; }
+        
+        .public-room-card {
+            background: linear-gradient(90deg, #1e272e 0%, #252f38 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--gold);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
             animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        .public-room-item:hover { transform: translateX(5px); background: #252f38; border-left-color: var(--gold); }
-        .public-room-info h4 { margin: 0; color: var(--gold); font-size: 1.1rem; }
-        .public-room-info span { font-size: 0.75rem; color: var(--text-muted); }
-        .player-count-badge { background: var(--blue); color: white; padding: 4px 10px; border-radius: 50px; font-size: 0.8rem; font-weight: 900; }
+        .public-room-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-left-color: var(--blue); }
+        .room-info h3 { margin: 0; color: white; font-size: 1.1rem; }
+        .room-info span { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; }
+        .room-badge { background: var(--blue); color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 900; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* AVATARES */
+        .avatar-img { width: 40px; height: 40px; border-radius: 50%; vertical-align: middle; margin-right: 10px; border: 2px solid var(--gold); background: #0b1015; object-fit: cover; box-shadow: 0 0 10px rgba(241, 196, 15, 0.3); }
+        .leader-aura { border: 2px solid var(--red) !important; box-shadow: 0 0 15px var(--red); animation: pulseAura 2s infinite; }
+        @keyframes pulseAura { 0% { box-shadow: 0 0 5px var(--red); } 50% { box-shadow: 0 0 15px var(--red); } 100% { box-shadow: 0 0 5px var(--red); } }
+        .btn-change-avatar { background: var(--blue); color: white; padding: 4px 10px; font-size: 0.7rem; border-radius: 50px; width: auto; display: inline-block; cursor: pointer; border:none; margin-left: 10px; transition: 0.2s; }
+        .btn-change-avatar:hover { transform: scale(1.1); filter: brightness(1.2); }
+        .vote-card .avatar-img { width: 60px; height: 60px; display: block; margin: 0 auto 10px; border-width: 3px; }
 
         /* GENERAL UI */
-        .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); animation: fadeIn 0.5s ease; }
-        #lobbyScreen, #gameScreen, #votingScreen { width: 100%; max-width: 400px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; transition: border-color 0.3s; }
-        input:focus { border-color: var(--gold); }
-        button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
-        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); }
+        .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        #lobbyScreen, #gameScreen, #votingScreen { width: 100%; max-width: 400px; display: none; }
+        
+        input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(241, 196, 15, 0.1); }
+        button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
+        button:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.4); }
         .btn-main { background: var(--red); color: white; }
         .btn-blue { background: var(--blue); color: white; }
         
-        .player-list { list-style: none; padding: 0; background: #0b1015; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        .player-item { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.3s ease; }
-        
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 6000; top: 30px; font-weight: bold; opacity: 0; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        /* INTRO */
+        #intro-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a2a6c 0%, #0f0f0f 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.8s; }
+        .intro-logo-img { width: 220px; animation: floatInEpic 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5)); }
+        @keyframes floatInEpic { from { opacity: 0; transform: scale(0.8) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* CHAT */
+        #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        #chat-btn:hover { transform: scale(1.1); }
+        .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .chat-badge.visible { transform: scale(1); }
+        #chat-window { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px; background: var(--chat-bg); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chat-header { padding: 15px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-input-area { padding: 10px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); display: flex; gap: 5px; flex-direction: column; }
+        .chat-input { flex: 1; background: #0b1015; border: 1px solid var(--border); border-radius: 20px; padding: 10px 15px; color: white; outline: none; }
+        .chat-send { background: var(--blue); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .reply-context { font-size: 0.7rem; color: var(--gold); padding: 5px 10px; background: rgba(241, 196, 15, 0.1); border-left: 2px solid var(--gold); border-radius: 4px; margin-bottom: 5px; display: none; justify-content: space-between; align-items: center; cursor: pointer; }
+        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; animation: popIn 0.3s; cursor: pointer; }
+        .msg-me { align-self: flex-end; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); color: #2c3e50; border-bottom-right-radius: 4px; box-shadow: 0 2px 10px rgba(241, 196, 15, 0.2); }
+        .msg-other { align-self: flex-start; background: #2f3640; color: white; border-bottom-left-radius: 4px; }
+        .msg-author { font-size: 0.7rem; font-weight: bold; margin-bottom: 2px; opacity: 0.7; display: block; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* RESTO */
+        .player-list { list-style: none; padding: 0; margin: 0; background: #0b1015; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .player-item { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        #charImage { width: 100%; height: 220px; object-fit: cover; background: #000; }
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 6000; top: 30px; font-weight: bold; opacity: 0; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         #toast.show { visibility: visible; opacity: 1; top: 50px; }
+        .timer-box { font-size: 2rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(241, 196, 15, 0.5); margin-bottom: 10px; display: inline-block; }
+        .ocean { height: 100px; width: 100%; position: absolute; bottom: 0; left: 0; z-index: -1; overflow: hidden; }
+        .wave { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 198'%3E%3Cpath fill='%232c3e50' d='M1600 198H0V0h0c266.7 0 266.7 42 533.3 42S800 0 1066.7 0 1333.3 42 1600 42z'/%3E%3C/svg%3E") repeat-x; position: absolute; width: 6400px; height: 198px; bottom: -60px; opacity: 0.3; animation: wave 10s infinite linear; }
+        @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
+        /* RULETA */
+        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 21, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .roulette-title { color: var(--gold); font-size: 2.5rem; margin-bottom: 30px; text-transform: uppercase; font-weight: 900; text-shadow: 0 4px 0 #000; }
+        .roulette-container { position: relative; width: 340px; height: 340px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6)); }
+        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #5a4033; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 0 0 5px var(--gold); position: relative; overflow: hidden; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .wheel-text { position: absolute; top: 50%; left: 50%; transform-origin: center; width: 100%; height: 0px; display: flex; justify-content: flex-end; align-items: center; padding-right: 40px; z-index: 5; pointer-events: none; }
+        .wheel-text span { color: white; font-weight: 900; font-size: 1.1rem; text-shadow: 2px 2px 2px rgba(0,0,0,0.9); text-transform: uppercase; white-space: nowrap; }
+        .roulette-hub { position: absolute; width: 60px; height: 60px; background: #2c3e50; border: 4px solid var(--gold); border-radius: 50%; z-index: 10; box-shadow: 0 0 15px black; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+        .roulette-pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 20; width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-top: 50px solid #ecf0f1; filter: drop-shadow(0 6px 4px rgba(0,0,0,0.4)); }
     </style>
 </head>
 <body>
 
     <div id="intro-loader">
-        <div class="intro-content-box">
-            <img src="jolly.png" class="intro-logo-img" alt="Logo">
-        </div>
+        <div class="intro-content-box"><img src="jolly.png" class="intro-logo-img"></div>
     </div>
 
     <div id="toast"></div>
@@ -88,101 +163,109 @@
         <div class="chat-header"><span>CHAT NAKAMA</span><span onclick="toggleChat()" style="cursor:pointer">▼</span></div>
         <div id="chat-messages" class="chat-messages"></div>
         <div class="chat-input-area">
-            <div id="reply-context" class="reply-context" onclick="cancelReply()" style="display:none"><span>Respondiendo...</span><span>✕</span></div>
+            <div id="reply-context" class="reply-context" onclick="cancelReply()"><span>Respondiendo...</span><span>✕</span></div>
             <div class="input-row" style="display:flex; gap:5px">
-                <input type="text" id="chat-input" class="chat-input" placeholder="ESCRIBE...">
-                <button class="chat-send" onclick="sendChatMessage()" style="width:50px; padding:0">➤</button>
+                <input type="text" id="chat-input" class="chat-input" placeholder="Escribe...">
+                <button class="chat-send" onclick="sendChatMessage()">➤</button>
             </div>
         </div>
     </div>
+
+    <div id="roulette-screen">
+        <div class="roulette-title">¡EMPATE!</div>
+        <div class="roulette-container">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-wheel" id="rouletteWheel"></div>
+            <div class="roulette-hub">☠️</div>
+        </div>
+        <p style="color:#aaa; margin-top:30px; font-weight:bold;">La suerte decidirá...</p>
+    </div>
+
+    <div class="ocean"><div class="wave"></div></div>
 
     <div class="header-container" id="mainHeader">
-        <img src="logo.png" class="header-logo" alt="Logo">
+        <img src="logo.png" class="header-logo" alt="Logo Nakama Sync">
     </div>
 
-    <div id="setupScreen" class="container">
-        <div class="setup-main">
-            <h2 style="color:var(--gold); margin:0">ZARPAR AL MAR</h2>
-            <div>
-                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px">CÓDIGO DE SALA</label>
-                <input type="text" id="seedInput" placeholder="EJ: WANO" maxlength="10">
+    <div id="setupScreen" class="container" style="display:flex;">
+        <div class="setup-left">
+            <h2 style="color:var(--gold); margin-top:0;">ZARPAR AL MAR</h2>
+            <div class="input-group">
+                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px;">CÓDIGO DE SALA</label>
+                <input type="text" id="seedInput" placeholder="EJ: WANO">
             </div>
-            <div>
-                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px">TU NOMBRE PIRATA</label>
-                <input type="text" id="myPlayerName" placeholder="TU NOMBRE" maxlength="12">
+            <div class="input-group" style="margin-top:15px;">
+                <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:5px;">TU NOMBRE PIRATA</label>
+                <input type="text" id="myPlayerName" placeholder="TU NOMBRE">
                 <div id="savedNameBox" style="display:none; background:#1e272e; padding:10px; border-radius:10px; margin-top:10px; justify-content:space-between; align-items:center;">
-                    <span id="displaySavedName" style="font-weight:900"></span>
-                    <button style="width:auto; padding:5px" onclick="cambiarNombre()">⚙️</button>
+                    <span id="displaySavedName" style="color:var(--gold); font-weight:900;"></span>
+                    <button style="width:auto; padding:5px; box-shadow:none;" onclick="cambiarNombre()">⚙️</button>
                 </div>
             </div>
-            <button class="btn-main" onclick="unirseSala()">ENTRAR A LA SALA 🏴‍☠️</button>
+            <button class="btn-main" style="margin-top:20px;" onclick="unirseSala()">ENTRAR A LA SALA 🏴‍☠️</button>
         </div>
-
-        <div class="setup-side">
-            <h3 style="color:var(--blue); margin-top:0; border-bottom:1px solid var(--border); padding-bottom:10px">SALAS PÚBLICAS</h3>
-            <div id="activeRooms">
-                <p style="text-align:center; color:var(--text-muted); font-size:0.9rem">Buscando nakamas...</p>
+        
+        <div class="setup-right">
+            <div class="room-list-header">SALAS ACTIVAS 🌍</div>
+            <div id="activeRooms" class="room-list-box">
+                <p style="text-align:center; color:var(--text-muted); font-size:0.8rem; margin-top:50px;">Buscando barcos...</p>
             </div>
         </div>
     </div>
 
     <div id="lobbyScreen" class="container">
-        <h2 style="color:var(--gold); text-align:center; margin-top:0">SALA: <span id="lobbyRoomName"></span></h2>
+        <h2 style="color:var(--gold); text-align:center; margin-top:0;">SALA: <span id="lobbyRoomName"></span></h2>
         <ul id="onlinePlayerList" class="player-list"></ul>
-        <div id="adminSection" style="display:none; margin-top:15px">
-            <label style="font-size:0.8rem; color:var(--blue); display:block; margin-bottom:5px">MODO DE JUEGO</label>
-            <select id="gameModeSelect">
-                <option value="CLASSIC">⚓ CLÁSICO</option>
-                <option value="AKUMA">🍇 AKUMA NO MI</option>
-                <option value="REVERSE">👺 INVERSO</option>
-            </select>
+        <div id="adminSection" style="display:none; margin-top:15px;">
+            <label style="color:var(--blue); font-size:0.8rem; display:block; margin-bottom:5px;">MODO DE JUEGO</label>
+            <select id="gameModeSelect"><option value="CLASSIC">⚓ CLÁSICO</option><option value="AKUMA">🍇 AKUMA</option><option value="REVERSE">👺 INVERSO</option></select>
         </div>
-        <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px" onclick="comenzarPartida()">ESPERANDO CAPITÁN...</button>
-        <button id="btnClean" class="btn-main" style="display:none; background:transparent; border:1px solid var(--red); color:var(--red); margin-top:10px" onclick="limpiarSala()">BORRAR SALA (ADMIN)</button>
-        <button class="btn-blue" onclick="copiarLink()" style="margin-top:10px">🔗 COPIAR ENLACE</button>
+        <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px;" onclick="comenzarPartida()">ESPERANDO CAPITÁN...</button>
+        <button id="btnClean" class="btn-main" style="display:none; background:transparent; border:1px solid var(--red); color:var(--red); margin-top:10px;" onclick="limpiarSala()">ELIMINAR SALA (ADMIN)</button>
+        <button class="btn-blue" onclick="copiarLink()" style="margin-top:10px;">🔗 COPIAR ENLACE</button>
     </div>
 
     <div id="gameScreen" class="container">
-        <div id="gameTimer" class="timer-box" style="text-align:center; display:block; margin:0 auto">03:00</div>
-        <div id="eventDisplay" style="background:rgba(55,66,250,0.2); padding:10px; border-radius:10px; display:none; text-align:center; font-size:0.8rem; margin:10px 0"></div>
+        <div id="gameTimer" class="timer-box" style="text-align:center; display:block; margin:0 auto;">03:00</div>
+        <div id="eventDisplay" style="background:rgba(55,66,250,0.2); padding:10px; border-radius:10px; display:none; text-align:center; font-size:0.8rem; margin:10px 0;"></div>
         <div class="big-card" id="myCard" onclick="revelarMiRol()" style="height:350px; background:#1e272e; border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px solid var(--border); cursor:pointer;">
             <div style="font-size:4rem">👆</div>
             <h2 id="cardNameDisplay">NOMBRE</h2>
-            <p style="color:var(--red); font-weight:bold">TOCA PARA VER ROL</p>
+            <p style="color:var(--red); font-weight:bold;">TOCA PARA VER ROL</p>
         </div>
-        <button class="btn-main" style="margin-top:20px" onclick="irAVotacion()">🗳️ IR A VOTACIÓN</button>
+        <button class="btn-main" style="margin-top:20px;" onclick="irAVotacion()">🗳️ IR A VOTACIÓN</button>
     </div>
 
     <div id="votingScreen" class="container">
-        <h2 style="color:var(--red); text-align:center; margin-top:0">VOTACIÓN</h2>
-        <div id="votingGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px"></div>
-        <div id="reveal-area" style="text-align:center; margin-top:20px; display:none; background:#1e272e; padding:20px; border-radius:15px; border:1px dashed var(--border)">
-            <h2 id="secretName" style="color:var(--gold); margin:0"></h2>
-            <button class="btn-blue" style="margin-top:10px" onclick="abrirFotoModal(personajePartida)">📷 VER FOTO</button>
-            <button class="btn-main" style="margin-top:10px" onclick="reiniciarPartida()">OTRA PARTIDA</button>
+        <h2 style="color:var(--red); text-align:center; margin-top:0;">VOTACIÓN</h2>
+        <div id="votingGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
+        <div id="reveal-area" style="text-align:center; margin-top:20px; display:none; background:#1e272e; padding:20px; border-radius:15px; border:1px dashed var(--border);">
+            <h2 id="secretName" style="color:var(--gold); margin:0;"></h2>
+            <button class="btn-blue" onclick="abrirFotoModal(personajePartida)">📷 VER FOTO</button>
+            <button class="btn-main" style="margin-top:10px;" onclick="reiniciarPartida()">JUGAR OTRA VEZ</button>
         </div>
-        <button class="btn-blue" style="margin-top:20px" onclick="location.reload()">🏠 SALIR</button>
+        <button class="btn-blue" style="margin-top:20px;" onclick="location.reload()">🏠 SALIR</button>
     </div>
 
-    <div id="imgModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:7000; display:none; align-items:center; justify-content:center">
+    <div id="imgModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:7000; display:none; align-items:center; justify-content:center;">
         <div class="wanted-paper">
-            <span style="position:absolute; top:-15px; right:-15px; background:var(--red); color:white; width:35px; height:35px; border-radius:50%; text-align:center; line-height:35px; cursor:pointer" onclick="document.getElementById('imgModal').style.display='none'">✕</span>
-            <h3 style="font-family:serif; font-weight:900; margin:0">WANTED</h3>
-            <div style="height:220px; background:#888; border:3px solid #3e2723; overflow:hidden"><img id="charImage" src="" style="width:100%; height:100%; object-fit:cover"></div>
-            <h2 id="wantedName" style="font-family:serif; margin:10px 0"></h2>
+            <span style="position:absolute; top:-15px; right:-15px; background:var(--red); color:white; width:35px; height:35px; border-radius:50%; text-align:center; line-height:35px; cursor:pointer;" onclick="document.getElementById('imgModal').style.display='none'">✕</span>
+            <h3 style="font-family:serif; font-weight:900; margin:0;">WANTED</h3>
+            <div style="height:220px; background:#888; border:3px solid #3e2723; overflow:hidden;"><img id="charImage" src=""></div>
+            <h2 id="wantedName" style="font-family:serif; margin:10px 0;"></h2>
         </div>
     </div>
 
-    <div id="modalOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:8000; display:none; align-items:center; justify-content:center; padding:20px">
-        <div style="background:#1e272e; width:100%; max-width:350px; padding:30px; border-radius:20px; text-align:center; border:1px solid var(--border)">
-            <h1 id="modalTitle" style="text-transform:uppercase; margin:0"></h1>
-            <div id="modalDesc" style="margin:20px 0; color:#bdc3c7; line-height:1.4"></div>
+    <div id="modalOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:8000; display:none; align-items:center; justify-content:center; padding:20px;">
+        <div style="background:#1e272e; width:100%; max-width:350px; padding:30px; border-radius:20px; text-align:center; border:1px solid var(--border);">
+            <h1 id="modalTitle" style="text-transform:uppercase;"></h1>
+            <div id="modalDesc" style="margin:20px 0; color:#bdc3c7; line-height:1.4;"></div>
             <button class="btn-main" onclick="document.getElementById('modalOverlay').style.display='none'">ENTENDIDO</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN AVATARES
+        // CONFIG
         const avatares = [
             "https://img.vavel.com/luffy-one-piece-1-1692261685711.jpg",
             "https://cdn.hobbyconsolas.com/sites/navi.axelspringer.es/public/media/image/2022/11/one-piece-zoro-2868843.jpg",
@@ -191,43 +274,56 @@
             "https://cdn.portalatento.com.br/atento/uploads/noticia/capa/2023/10/sanji-one-piece-manga-animes-1024x576.jpg",
             "https://m.media-amazon.com/images/M/MV5BMmM0Zjk5NzUtOTljYy00MTBmLTlkZTEtYmQxYzg0YTM5ZTk2XkEyXkFqcGc@._V1_QL75_UX500_CR0,47,500,281_.jpg"
         ];
-
-        const personajes = ["LUFFY", "ZORO", "NAMI", "USOPP", "SANJI", "CHOPPER", "ROBIN", "FRANKY", "BROOK", "JINBE", "SHANKS", "ACE", "SABO", "LAW", "KID", "HANCOCK", "DOFLAMINGO", "CROCODILE"];
+        const personajes = ["Luffy", "Zoro", "Nami", "Usopp", "Sanji", "Chopper", "Robin", "Franky", "Brook", "Jinbe", "Zeus", "Shanks", "Teach", "Buggy", "Shirohige", "Kaido", "Big Mom", "Roger", "Rayleigh", "Oden", "Akainu", "Kizaru", "Aokiji", "Fujitora", "Sengoku", "Garp", "Mihawk", "Crocodile", "Doflamingo", "Kuma", "Hancock", "Law", "Kid", "Killer", "Bonney", "Yamato", "Ace", "Marco", "Katakuri", "Sabo", "Dragon"];
 
         let miAvatarIdx = localStorage.getItem('nakama_avatar') || 0;
         let miNombre = "", seedActual = "", gameSeed = "", jugadores = [], soyLider = false, miRol = "", personajePartida = "", pollingInterval = null, heVotado = false, chatOpen = false, lastMsgId = 0, currentReply = null;
 
         window.onload = () => {
-            // Intro
-            setTimeout(() => { document.getElementById('intro-loader').style.opacity='0'; setTimeout(()=>document.getElementById('intro-loader').style.display='none', 800); }, 2000);
-            
-            // Link directo
+            setTimeout(() => { document.getElementById('intro-loader').style.opacity='0'; setTimeout(()=>document.getElementById('intro-loader').style.display='none',800); }, 2000);
             const params = new URLSearchParams(window.location.search);
             if(params.get('room')) document.getElementById('seedInput').value = params.get('room').toUpperCase();
-
-            // Mayúsculas en inputs
+            
+            // FORZAR MAYUSCULAS
             document.querySelectorAll('input[type="text"]').forEach(input => {
                 input.addEventListener('input', () => { input.value = input.value.toUpperCase(); });
             });
 
-            cargarNombreGuardado();
-            cargarSalas();
-            setInterval(cargarSalas, 5000);
+            cargarNombreGuardado(); cargarSalas(); setInterval(cargarSalas, 5000);
         };
 
-        function cargarNombreGuardado() {
-            const s = localStorage.getItem('nakama_name');
-            if(s) { miNombre = s; document.getElementById('myPlayerName').style.display='none'; document.getElementById('savedNameBox').style.display='flex'; document.getElementById('displaySavedName').innerText = "HOLA, " + s; }
-        }
-
+        function cargarNombreGuardado() { const s = localStorage.getItem('nakama_name'); if(s) { miNombre = s; document.getElementById('myPlayerName').style.display='none'; document.getElementById('savedNameBox').style.display='flex'; document.getElementById('displaySavedName').innerText = "HOLA, " + s; } }
         function cambiarNombre() { localStorage.removeItem('nakama_name'); location.reload(); }
 
-        // CHAT LOGIC
-        function toggleChat() {
-            chatOpen = !chatOpen; document.getElementById('chat-window').style.display = chatOpen ? 'flex' : 'none';
-            if(chatOpen) { document.getElementById('unread-badge').classList.remove('visible'); pollChat(); }
+        // SALAS PÚBLICAS MEJORADAS
+        async function cargarSalas() {
+            if(document.getElementById('setupScreen').style.display==='none') return;
+            const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
+            if(res.ok) {
+                const rooms = await res.json();
+                const cont = document.getElementById('activeRooms');
+                if(rooms.length === 0) { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:50px;">NO HAY SALAS ACTIVAS</p>'; return; }
+                
+                cont.innerHTML = "";
+                rooms.forEach((r, idx) => {
+                    const card = document.createElement('div');
+                    card.className = "public-room-card";
+                    card.style.animationDelay = (idx * 0.1) + "s"; // Escalera de animaciones
+                    card.innerHTML = `
+                        <div class="room-info">
+                            <h3>${r.room_code}</h3>
+                            <span>EN LÍNEA</span>
+                        </div>
+                        <div class="room-badge">👥 ${r.count}</div>
+                    `;
+                    card.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
+                    cont.appendChild(card);
+                });
+            }
         }
 
+        // CHAT
+        function toggleChat() { chatOpen = !chatOpen; document.getElementById('chat-window').style.display = chatOpen ? 'flex' : 'none'; if(chatOpen) { document.getElementById('unread-badge').classList.remove('visible'); pollChat(); } }
         async function pollChat() {
             if(!seedActual) return;
             const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'get_messages', room: seedActual }) });
@@ -240,57 +336,26 @@
                         const isMe = m.player_name === miNombre;
                         container.innerHTML += `<div class="msg ${isMe?'msg-me':'msg-other'}" onclick="setReply('${m.player_name}')">
                             <span class="msg-author">${m.player_name}</span>
-                            ${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
+                            ${m.reply_to ? `<div style="font-size:0.6rem; opacity:0.6;">↪ ${m.reply_to}</div>` : ''}${m.content}</div>`;
                     });
                     if(!chatOpen) document.getElementById('unread-badge').classList.add('visible');
                     lastMsgId = msgs.length; container.scrollTop = container.scrollHeight;
                 }
             }
         }
-
-        function setReply(name) { currentReply = name; document.getElementById('reply-context').style.display='flex'; document.getElementById('reply-context').firstChild.innerText = "RESP A: " + name; }
+        function setReply(name) { currentReply = name; document.getElementById('reply-context').style.display='flex'; document.getElementById('reply-context').firstChild.innerText = "Resp a: " + name; }
         function cancelReply() { currentReply = null; document.getElementById('reply-context').style.display='none'; }
-
         async function sendChatMessage() {
             const inp = document.getElementById('chat-input'); if(!inp.value.trim()) return;
             await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'send_message', room: seedActual, player: miNombre, content: inp.value.toUpperCase(), replyTo: currentReply }) });
             inp.value = ""; cancelReply(); pollChat();
         }
 
-        // SALAS PÚBLICAS LOGIC
-        async function cargarSalas() {
-            if(document.getElementById('setupScreen').style.display==='none') return;
-            const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'list' }) });
-            if(res.ok) {
-                const rooms = await res.json();
-                const cont = document.getElementById('activeRooms');
-                if(rooms.length === 0) {
-                    cont.innerHTML = '<p style="text-align:center; color:var(--text-muted)">No hay salas. ¡Crea una!</p>';
-                    return;
-                }
-                cont.innerHTML = "";
-                rooms.forEach((r, index) => {
-                    const roomEl = document.createElement('div');
-                    roomEl.className = 'public-room-item';
-                    roomEl.style.animationDelay = (index * 0.1) + 's';
-                    roomEl.innerHTML = `
-                        <div class="public-room-info">
-                            <h4>${r.room_code}</h4>
-                            <span>ACTIVA AHORA</span>
-                        </div>
-                        <div class="player-count-badge">👥 ${r.count}</div>
-                    `;
-                    roomEl.onclick = () => { document.getElementById('seedInput').value = r.room_code; unirseSala(); };
-                    cont.appendChild(roomEl);
-                });
-            }
-        }
-
-        // CORE GAME LOGIC
+        // CORE
         async function unirseSala() {
             seedActual = document.getElementById('seedInput').value.trim().toUpperCase();
             if(!miNombre) miNombre = document.getElementById('myPlayerName').value.trim().toUpperCase();
-            if(!miNombre || !seedActual) { showToast("¡RELLENA LOS CAMPOS!"); return; }
+            if(!miNombre || !seedActual) { showToast("Nombre y Sala obligatorios"); return; }
             const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'join', room: seedActual, player: miNombre }) });
             if(res.ok) { localStorage.setItem('nakama_name', miNombre); irALobby(); }
         }
@@ -314,8 +379,8 @@
             jugadores.forEach(p => {
                 const isCap = p === leader;
                 const avatarUrl = p === miNombre ? avatares[miAvatarIdx] : avatares[Math.abs(p.length) % avatares.length];
-                const changeBtn = p === miNombre ? `<span class="btn-change-avatar" onclick="cambiarMiAvatar()">🔄 AVATAR</span>` : "";
-                const kickBtn = (soyLider || miNombre === 'STRIOLO') && p !== miNombre ? `<span onclick="kickPlayer('${p}')" style="cursor:pointer; color:var(--red)">✕</span>` : "";
+                const changeBtn = p === miNombre ? `<span class="btn-change-avatar" onclick="cambiarMiAvatar()">🔄 CAMBIAR</span>` : "";
+                const kickBtn = (soyLider || miNombre === 'STRIOLO') && p !== miNombre ? `<span onclick="kickPlayer('${p}')" style="cursor:pointer; color:var(--red); font-weight:bold; margin-left:10px;">✕</span>` : "";
                 list.innerHTML += `<li class="player-item"><span><img src="${avatarUrl}" class="avatar-img ${isCap?'leader-aura':''}"> ${p} ${isCap?'👑':''} ${changeBtn}</span>${kickBtn}</li>`;
             });
             if(soyLider) { document.getElementById('adminSection').style.display='block'; document.getElementById('btnZarpar').innerText = "ZARPAR TODOS ⚓"; document.getElementById('btnZarpar').classList.remove('disabled'); }
@@ -340,24 +405,24 @@
 
         function revelarMiRol() {
             document.getElementById('modalTitle').innerText = miRol;
-            document.getElementById('modalDesc').innerHTML = miRol === "IMPOSTOR" ? "MIENTE Y SOBREVIVE AL MAR." : `TU PERSONAJE ES:<br><b style='color:var(--gold); font-size:1.8rem;'>${personajePartida}</b>`;
+            document.getElementById('modalDesc').innerHTML = miRol === "IMPOSTOR" ? "Miente y sobrevive." : `Tu personaje es:<br><b style='color:var(--gold); font-size:1.8rem;'>${personajePartida}</b>`;
             document.getElementById('modalOverlay').style.display='flex';
         }
 
         function irAVotacion() {
-            if(!confirm("¿IR A VOTACIÓN?")) return;
+            if(!confirm("¿Ir a votación?")) return;
             document.getElementById('gameScreen').style.display='none'; document.getElementById('votingScreen').style.display='flex';
             const grid = document.getElementById('votingGrid'); grid.innerHTML = "";
             jugadores.forEach(p => {
                 const avatar = p === miNombre ? avatares[miAvatarIdx] : avatares[Math.abs(p.length) % avatares.length];
-                grid.innerHTML += `<div class="vote-card" onclick="votar('${p}', this)" style="background:#252f38; border-radius:12px; padding:15px; text-align:center; cursor:pointer; border:2px solid transparent;"><img src="${avatar}" class="avatar-img" style="width:50px; height:50px; display:block; margin:0 auto 10px">${p}</div>`;
+                grid.innerHTML += `<div class="vote-card" onclick="votar('${p}', this)" style="background:#252f38; border-radius:10px; padding:15px; text-align:center; cursor:pointer; border:2px solid transparent;"><img src="${avatar}" class="avatar-img" style="width:50px; height:50px; display:block; margin:0 auto 10px;">${p}</div>`;
             });
         }
 
         async function votar(t, el) {
             if(heVotado) return;
             await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'vote', room: seedActual, player: miNombre, target: t }) });
-            heVotado = true; el.style.borderColor = 'var(--gold)'; el.style.background = '#0b1015';
+            heVotado = true; el.style.borderColor = 'var(--gold)';
         }
 
         function mostrarResultado(e) {
@@ -368,16 +433,19 @@
         async function abrirFotoModal(n) {
             const m = document.getElementById('imgModal'); m.style.display='flex'; document.getElementById('wantedName').innerText = n;
             const q = `query ($s: String) { Page(perPage: 1) { characters(search: $s) { image { large } } } }`;
-            const res = await fetch('https://graphql.anilist.co', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ query: q, variables: { s: n + " ONE PIECE" } }) });
+            const res = await fetch('https://graphql.anilist.co', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ query: q, variables: { s: n + " One Piece character" } }) });
             const json = await res.json(); if(json.data.Page.characters[0]) document.getElementById('charImage').src = json.data.Page.characters[0].image.large;
         }
 
         function showToast(m) { const x = document.getElementById("toast"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
         function copiarLink() { const url = new URL(window.location.href); url.searchParams.set('room', seedActual); navigator.clipboard.writeText(url.toString()); showToast("🔗 ENLACE COPIADO"); }
-        async function limpiarSala() { if(confirm("¿BORRAR SALA?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); }
+        async function limpiarSala() { if(confirm("¿Borrar sala?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); }
         async function comenzarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) }); }
         async function reiniciarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); else location.reload(); }
         async function kickPlayer(t) { if(confirm("¿ECHAR A " + t + "?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: t }) }); }
+        
+        function gestionarResultado(data){const votes=data.votes||{};let maxV=0;Object.values(votes).forEach(v=>{if(v>maxV)maxV=v;});const tied=Object.keys(votes).filter(k=>votes[k]===maxV);if(tied.length>1&&!roulettePlayed){roulettePlayed=true;jugarRuleta(tied,data.ejected);}else if(tied.length===1||roulettePlayed){mostrarResultado(data.ejected);}}
+        function jugarRuleta(candidatos,perdedorReal){const screen=document.getElementById('roulette-screen');const wheel=document.getElementById('rouletteWheel');screen.style.display='flex';const palette=['#e74c3c','#3498db','#f1c40f','#9b59b6','#2ecc71','#e67e22'];let gradientStr="conic-gradient(";const step=360/candidatos.length;candidatos.forEach((c,i)=>{const color=palette[i%palette.length];gradientStr+=`${color} ${i*step}deg ${(i+1)*step}deg${i===candidatos.length-1?'':','}`;});gradientStr+=")";wheel.style.background=gradientStr;wheel.innerHTML="";candidatos.forEach((name,i)=>{const textContainer=document.createElement('div');textContainer.className='wheel-text';const angle=(i*step)+(step/2);textContainer.style.transform=`translate(-50%, -50%) rotate(${angle-90}deg)`;textContainer.innerHTML=`<span>${name}</span>`;wheel.appendChild(textContainer);});const winnerIndex=candidatos.indexOf(perdedorReal);const winnerAngle=(winnerIndex*step)+(step/2);const randomOffset=(Math.random()*(step*0.6))-(step*0.3);const targetRotation=1800+(360-winnerAngle)+randomOffset;requestAnimationFrame(()=>{setTimeout(()=>{wheel.style.transform=`rotate(${targetRotation}deg)`;setTimeout(()=>{confetti({particleCount:200,spread:90,origin:{y:0.6},colors:['#f1c40f','#e74c3c']});setTimeout(()=>{screen.style.display='none';mostrarResultado(perdedorReal);},2500);},5000);},100);});}
 
         function cyrb128(s){let h1=1779033703,h2=3144134277,h3=1013904242,h4=2773480762;for(let i=0,k;i<s.length;i++){k=s.charCodeAt(i);h1=h2^Math.imul(h1^k,597399067);h2=h3^Math.imul(h2^k,2869860233);h3=h4^Math.imul(h3^k,951274213);h4=h1^Math.imul(h4^k,2716044179)}return[h1>>>0,h2>>>0,h3>>>0,h4>>>0]}
         function sfc32(a,b,c,d){return function(){a>>>=0;b>>>=0;c>>>=0;d>>>=0;var t=(a+b)|0;a=b^b>>>9;b=c+(c<<3)|0;c=(c<<21|c>>>11);d=d+1|0;t=t+d|0;c=c+t|0;return(t>>>0)/4294967296}}
