@@ -411,6 +411,18 @@
             if(soyLider || miNombre === 'STRIOLO') document.getElementById('btnClean').style.display='block';
         }
 
+        // Manejo de Errores para Botón Zarpar
+        async function comenzarPartida() { 
+            if(soyLider) {
+                try {
+                    const res = await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) });
+                    if(!res.ok) throw new Error("Error en servidor");
+                } catch(e) {
+                    showToast("❌ ERROR DE CONEXIÓN CON SERVIDOR");
+                }
+            }
+        }
+
         function cambiarMiAvatar() { 
             // Cambia el 'salt' para generar un nuevo color aleatorio
             miAvatarSalt = Math.random().toString();
@@ -469,7 +481,7 @@
         function showToast(m) { const x = document.getElementById("toast"); x.innerText = m; x.className = "show"; setTimeout(() => x.className = "", 3000); }
         function copiarLink() { const url = new URL(window.location.href); url.searchParams.set('room', seedActual); navigator.clipboard.writeText(url.toString()); showToast("🔗 ENLACE COPIADO"); }
         async function limpiarSala() { if(confirm("¿Borrar sala?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'clean', room: seedActual, player: miNombre }) }); }
-        async function comenzarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'start', room: seedActual, player: miNombre, gameMode: document.getElementById('gameModeSelect').value }) }); }
+        
         async function reiniciarPartida() { if(soyLider) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'reset', room: seedActual, player: miNombre }) }); else location.reload(); }
         async function kickPlayer(t) { if(confirm("¿ECHAR A " + t + "?")) await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'kick', room: seedActual, player: miNombre, target: t }) }); }
         
