@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --bg-top:#0f2027; --bg-bot:#203a43; --card-bg:rgba(21, 27, 36, 0.85); --text-main:#ecf0f1; --text-muted:#95a5a6; --gold:#f1c40f; --red:#ff4757; --blue:#3742fa; --chat-bg: rgba(21, 27, 36, 0.95); --border:rgba(255, 255, 255, 0.1); }
+        :root { --bg-top:#0f2027; --bg-bot:#203a43; --card-bg:#151b24; --text-main:#ecf0f1; --text-muted:#95a5a6; --gold:#f1c40f; --red:#ff4757; --blue:#3742fa; --chat-bg: rgba(21, 27, 36, 0.95); --border:#2c3e50; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: var(--text-main); overflow-x: hidden; background: linear-gradient(180deg, #0f2027 0%, #203a43 100%); background-attachment: fixed; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: var(--text-main); overflow-x: hidden; background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bot) 100%); background-attachment: fixed; }
         
         /* --- INTRO ELEGANTE --- */
         #intro-loader { 
@@ -19,17 +19,27 @@
             overflow: hidden; 
             transition: opacity 0.4s ease-out;
         }
+        
         .intro-content-box { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        
         .intro-logo-img { 
-            width: 250px; height: auto; position: relative; z-index: 2;
+            width: 250px; 
+            height: auto; 
+            position: relative; 
+            z-index: 2;
             animation: pirateBoom 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
+
+        /* FLASH SUAVE */
         .intro-flash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 215, 0, 0.3) 40%, rgba(0, 0, 0, 0) 80%);
-            opacity: 0; pointer-events: none; z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
             animation: softFlash 2.2s linear forwards;
         }
+
         @keyframes pirateBoom {
             0% { transform: translateX(120vw) rotate(720deg) scale(0.5); opacity: 0; }
             50% { transform: translateX(0) translateY(-80px) rotate(0deg) scale(1.2); opacity: 1; }
@@ -38,196 +48,156 @@
             95% { transform: scale(1.1); opacity: 1; }
             100% { transform: scale(30); opacity: 0; }
         }
+
         @keyframes softFlash {
             0%, 90% { opacity: 0; }
             95% { opacity: 1; transform: scale(1.5); }
             100% { opacity: 0; }
         }
-        body.boom-ready .container, body.boom-ready .header-container {
+
+        body.boom-ready .container, 
+        body.boom-ready .header-container {
             animation: afterShock 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes afterShock {
             0% { transform: scale(1.2); opacity: 0; filter: blur(8px); }
             100% { transform: scale(1); opacity: 1; filter: blur(0); }
         }
+        /* --- FIN INTRO --- */
 
-        /* --- UI GENERAL MODERNA --- */
-        .header-container { text-align: center; margin-top: 10px; margin-bottom: 30px; animation: float 6s ease-in-out infinite; }
-        .header-logo { max-width: 280px; width: 85%; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
+        /* RULETA */
+        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 21, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .roulette-title { color: var(--gold); font-size: 2.5rem; margin-bottom: 30px; text-transform: uppercase; font-weight: 900; text-shadow: 0 4px 0 #000; }
+        .roulette-container { position: relative; width: 340px; height: 340px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6)); }
+        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #5a4033; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 0 0 5px var(--gold); position: relative; overflow: hidden; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
+        .wheel-text { position: absolute; top: 50%; left: 50%; transform-origin: center; width: 100%; height: 0px; display: flex; justify-content: flex-end; align-items: center; padding-right: 40px; z-index: 5; pointer-events: none; }
+        .wheel-text span { color: white; font-weight: 900; font-size: 1.1rem; text-shadow: 2px 2px 2px rgba(0,0,0,0.9); text-transform: uppercase; white-space: nowrap; }
+        .roulette-hub { position: absolute; width: 60px; height: 60px; background: #2c3e50; border: 4px solid var(--gold); border-radius: 50%; z-index: 10; box-shadow: 0 0 15px black; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+        .roulette-pointer { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 20; width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-top: 50px solid #ecf0f1; filter: drop-shadow(0 6px 4px rgba(0,0,0,0.4)); }
+
+        /* CHAT FLOTANTE */
+        #chat-btn { position: fixed; bottom: 20px; left: 20px; width: 60px; height: 60px; background: var(--blue); border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 4000; border: 2px solid white; display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        #chat-btn:active { transform: scale(0.9); }
+        .chat-icon { font-size: 1.8rem; }
+        .chat-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; opacity: 0; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .chat-badge.visible { opacity: 1; transform: scale(1); }
+
+        #chat-window { position: fixed; bottom: 90px; left: 20px; width: 320px; height: 450px; background: var(--chat-bg); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .chat-header { padding: 15px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+        .chat-input-area { padding: 10px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); display: flex; gap: 5px; flex-direction: column; }
+        .input-row { display: flex; gap: 5px; }
+        .chat-input { flex: 1; background: #0b1015; border: 1px solid var(--border); border-radius: 20px; padding: 10px 15px; color: white; outline: none; font-family: inherit; }
+        .chat-send { background: var(--blue); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .reply-context { font-size: 0.7rem; color: var(--gold); padding: 5px 10px; background: rgba(241, 196, 15, 0.1); border-left: 2px solid var(--gold); border-radius: 4px; margin-bottom: 5px; display: none; justify-content: space-between; align-items: center; cursor: pointer; }
+
+        /* MENSAJES */
+        .msg { max-width: 80%; padding: 10px 14px; border-radius: 18px; font-size: 0.9rem; line-height: 1.4; position: relative; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); word-wrap: break-word; cursor: pointer; }
+        .msg:active { filter: brightness(0.8); }
+        .msg-me { align-self: flex-end; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); color: #2c3e50; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.2); }
+        .msg-other { align-self: flex-start; background: #2f3640; color: white; border-bottom-left-radius: 4px; border: 1px solid #444; }
+        .msg-author { font-size: 0.7rem; font-weight: bold; margin-bottom: 2px; opacity: 0.7; display: block; }
+        .msg-reply-ref { font-size: 0.7rem; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 8px; margin-bottom: 5px; border-left: 2px solid rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        /* RESTO CSS */
+        .header-container { text-align: center; margin-top: 10px; margin-bottom: 20px; animation: float 6s ease-in-out infinite; }
+        .header-logo { max-width: 280px; width: 80%; height: auto; display: block; margin: 0 auto 5px; filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2)); }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        .container { 
-            width: 100%; max-width: 400px; 
-            background: var(--card-bg); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 24px; 
-            padding: 30px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-            display: flex; flex-direction: column; gap: 20px; 
-            position: relative; z-index: 10; 
-            opacity: 0; /* Controlado por animación JS/CSS */
-        }
-
-        /* Layout Setup Screen */
-        @media (min-width: 768px) { 
-            #setupScreen.container { max-width: 850px; flex-direction: row; align-items: flex-start; gap: 30px; } 
-            .setup-left { flex: 1; min-width: 300px; padding-right: 20px; border-right: 1px solid var(--border); } 
-            .setup-right { flex: 1; } 
-        }
-        @media (max-width: 767px) { 
-            .setup-right { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); } 
-        }
-
-        /* Títulos */
-        h2 { 
-            font-weight: 900; letter-spacing: 1px; text-transform: uppercase; 
-            background: linear-gradient(to right, #f1c40f, #e67e22); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        /* Inputs Modernos */
-        .input-group { position: relative; margin-bottom: 15px; }
-        label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; display: block; letter-spacing: 0.5px; }
-        input, select { 
-            width: 100%; padding: 18px; 
-            border-radius: 16px; 
-            border: 2px solid rgba(255,255,255,0.05); 
-            background: rgba(0,0,0,0.3); 
-            color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; 
-            transition: all 0.3s ease;
-        }
-        input:focus, select:focus { 
-            border-color: var(--blue); 
-            box-shadow: 0 0 0 4px rgba(55, 66, 250, 0.1); 
-            background: rgba(0,0,0,0.5);
-        }
-        input { text-transform: uppercase; }
-
-        /* Botones Animados */
-        button { width: 100%; padding: 18px; border-radius: 16px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
-        button:active { transform: scale(0.96); }
+        .container { width: 100%; max-width: 400px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; animation: fadeIn 0.5s; }
+        @media (min-width: 768px) { #setupScreen.container { max-width: 800px; flex-direction: row; align-items: flex-start; } .setup-left { flex: 1; min-width: 300px; } .setup-right { flex: 1; border-left: 1px solid var(--border); padding-left: 20px; min-height: 250px; background: rgba(0,0,0,0.2); border-radius: 15px; } }
+        @media (max-width: 767px) { .setup-right { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; background: rgba(0,0,0,0.2); border-radius: 15px; padding: 15px; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #gameScreen, #votingScreen, #lobbyScreen { display: none; }
+        input, select { width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: #0b1015; color: white; font-size: 1.1rem; text-align: center; font-family: inherit; font-weight: 700; outline: none; }
+        input:focus, select:focus { border-color: var(--red); } input { text-transform: uppercase; } label { font-size: 0.8rem; color: var(--gold); font-weight: 800; margin-bottom: 8px; display: block; }
+        .user-saved-box { display: none; align-items: center; justify-content: space-between; background: #1e272e; padding: 15px; border-radius: 12px; border: 1px solid var(--blue); }
+        .user-saved-name { font-size: 1.2rem; font-weight: 900; color: white; }
+        .btn-settings { background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0 10px; color: var(--text-muted); transition: 0.2s; box-shadow: none; width: auto; }
+        .btn-settings:hover { color: var(--gold); transform: rotate(45deg); }
         
-        .btn-main { 
-            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%); 
-            color: white; 
-            box-shadow: 0 10px 20px -5px rgba(255, 71, 87, 0.4);
-            animation: pulseBtn 3s infinite;
-        }
+        button { width: 100%; padding: 18px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 0 rgba(0,0,0,0.4); }
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.4); } button.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        
+        /* BOTÓN UNIRSE/ZARPAR CON EFECTO CURSOR */
+        .btn-main { background: var(--red); color: white; position: relative; overflow: hidden; }
         .btn-main:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 15px 30px -5px rgba(255, 71, 87, 0.6);
-            filter: brightness(1.1);
+            background: #ff4757; 
+            transform: scale(1.03); 
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.5); 
         }
-        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
 
-        .btn-blue { background: #3742fa; color: white; margin-top: 10px; }
-        .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; }
-        .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; }
+        .btn-blue { background: var(--blue); color: white; margin-top: 10px; } .btn-vote { background: var(--gold); color: #2c3e50; margin-top: auto; } .btn-photo { background: #0b1015; color: var(--gold); border: 1px solid var(--gold); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; margin-top: 15px; display: inline-flex; align-items: center; gap: 8px; } .btn-clean { background: transparent; border: 1px solid #c0392b; color: #c0392b; margin-top:10px; padding: 10px; font-size: 0.8rem; } .btn-kick { background: none; border: none; color: #e74c3c; font-size: 1.2rem; cursor: pointer; padding: 0 5px; margin-left: 10px; box-shadow: none; width: auto; } .btn-kick:hover { transform: scale(1.2); }
         
-        /* Salas Activas */
-        .room-list-box { margin-top: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
-        .room-list-box::-webkit-scrollbar { width: 4px; }
-        .room-list-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
-
+        .player-list { list-style: none; padding: 0; margin: 0; max-height: 200px; overflow-y: auto; background: #0b1015; border-radius: 10px; border: 1px solid var(--border); }
+        .player-item { padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px #2ecc71; }
+        
+        /* SALAS ACTIVAS - DISEÑO MEJORADO */
+        .room-list-box { margin-top: 10px; max-height: 200px; overflow-y: auto; padding-right: 5px; }
         .room-item { 
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-left: 4px solid #576574;
-            border-radius: 12px; 
-            padding: 16px; 
+            background: linear-gradient(135deg, #1e272e 0%, #2c3e50 100%); 
+            border: 1px solid var(--border); 
+            border-left: 4px solid #576574; /* Borde neutro por defecto */
+            border-radius: 10px; 
+            padding: 15px; 
             margin-bottom: 10px; 
             cursor: pointer; 
-            display: flex; justify-content: space-between; align-items: center; 
-            transition: all 0.3s ease;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         .room-item:hover { 
-            transform: translateX(5px); 
-            background: rgba(255, 255, 255, 0.08);
-            border-left-color: var(--gold);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(5px); /* Se mueve a la derecha */
+            border-color: var(--gold); 
+            border-left-color: var(--gold); /* Borde dorado al pasar ratón */
+            box-shadow: 0 5px 15px rgba(241, 196, 15, 0.15); /* Resplandor dorado suave */
+            background: linear-gradient(135deg, #2c3e50 0%, #1e272e 100%);
         }
-        .room-code { color: white; font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; }
-        .room-count { color: var(--text-muted); font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
-        .room-join-txt { color: var(--blue); font-weight: 900; font-size: 0.8rem; transition: transform 0.3s; }
-        .room-item:hover .room-join-txt { transform: translateX(-3px); color: var(--gold); }
-
-        /* User Box */
-        .user-saved-box { display: none; align-items: center; justify-content: space-between; background: rgba(55, 66, 250, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--blue); }
-        .user-saved-name { font-size: 1.1rem; font-weight: 900; color: white; }
-        .btn-settings { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); transition: 0.3s; padding: 5px; width: auto; }
-        .btn-settings:hover { color: white; transform: rotate(90deg); }
-
-        /* Game Elements */
-        #gameScreen, #votingScreen, #lobbyScreen { display: none; }
-        .card-wrapper { width: 100%; height: 350px; margin-bottom: 20px; perspective: 1000px; }
-        .big-card { 
-            width: 100%; height: 100%; 
-            background: linear-gradient(145deg, #1e272e, #151b24); 
-            border-radius: 24px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+        .room-code { color: var(--gold); font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; }
+        .room-count { color: #bdc3c7; font-size: 0.85rem; margin-top: 2px; }
+        .room-time { color: var(--red); font-size: 0.75rem; font-weight: bold; margin-top: 4px; display: block; }
+        .room-join-txt { 
+            color: var(--blue); 
+            font-weight: 900; 
+            font-size: 0.9rem; 
+            text-transform: uppercase;
             transition: transform 0.3s;
         }
-        .big-card:hover { transform: translateY(-5px); }
+        .room-item:hover .room-join-txt {
+            transform: scale(1.1); /* Texto crece un poco */
+            color: var(--gold);
+        }
+
+        .card-wrapper { width: 100%; height: 350px; margin-bottom: 20px; }
+        .big-card { width: 100%; height: 100%; background: #1e272e; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .big-card.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-        .card-icon { font-size: 5rem; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); } 
-        .card-name { font-size: 2.2rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; text-align: center; } 
-        .card-hint { color: var(--red); font-size: 0.9rem; font-weight: 800; margin-top: 15px; letter-spacing: 1px; }
-
-        /* Chat */
-        #chat-btn { position: fixed; bottom: 25px; left: 25px; width: 65px; height: 65px; background: linear-gradient(135deg, #3742fa, #5f27cd); border-radius: 50%; box-shadow: 0 10px 25px rgba(55, 66, 250, 0.4); z-index: 4000; border: 2px solid rgba(255,255,255,0.2); display: none; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; }
-        #chat-btn:hover { transform: scale(1.1) rotate(5deg); }
-        .chat-badge { position: absolute; top: 0; right: 0; background: var(--red); color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; opacity: 0; transform: scale(0); transition: 0.3s; }
-        .chat-badge.visible { opacity: 1; transform: scale(1); }
-        #chat-window { position: fixed; bottom: 100px; left: 25px; width: 340px; height: 480px; background: var(--chat-bg); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.8); z-index: 4000; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .chat-header { padding: 18px; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border); font-weight: 900; display: flex; justify-content: space-between; align-items: center; color: var(--gold); letter-spacing: 1px; }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
-        .chat-input-area { padding: 15px; background: rgba(0,0,0,0.4); border-top: 1px solid var(--border); display: flex; gap: 8px; flex-direction: column; }
-        .input-row { display: flex; gap: 8px; }
-        .chat-send { width: 45px; height: 45px; border-radius: 12px; font-size: 1.2rem; padding: 0; }
-        .msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .msg-me { align-self: flex-end; background: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%); color: #2d3436; border-bottom-right-radius: 4px; font-weight: 600; }
-        .msg-other { align-self: flex-start; background: #34495e; color: white; border-bottom-left-radius: 4px; }
-        .msg-author { font-size: 0.7rem; font-weight: 800; margin-bottom: 4px; opacity: 0.7; display: block; text-transform: uppercase; }
-
-        /* Otros */
-        .player-list { list-style: none; padding: 0; margin: 0; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--border); }
-        .player-item { padding: 14px; border-bottom: 1px solid var(--border); font-size: 1rem; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
-        .online-dot { height: 8px; width: 8px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 10px #2ecc71; }
-        
-        .timer-box { font-size: 2.5rem; font-weight: 900; color: var(--gold); border: 2px solid var(--gold); border-radius: 12px; padding: 10px 25px; margin-bottom: 15px; display: inline-block; background: rgba(0,0,0,0.5); box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); }
-        
-        /* Voting */
-        .voting-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .vote-card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 25px 10px; text-align: center; font-weight: 700; cursor: pointer; color: white; border: 2px solid transparent; position: relative; transition: 0.2s; }
-        .vote-card:hover { background: rgba(255,255,255,0.1); transform: scale(1.02); }
-        .vote-card.selected { border-color: var(--gold); background: rgba(241, 196, 15, 0.1); }
-        
-        /* Modal & Overlays */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s; }
-        .modal-content { background: #1e272e; width: 100%; max-width: 380px; padding: 40px; border-radius: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); transform: scale(0.9); animation: popUp 0.3s forwards cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes popUp { to { transform: scale(1); } }
-        
-        /* Ruleta */
-        #roulette-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 16, 21, 0.98); z-index: 5000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .roulette-container { position: relative; width: 340px; height: 340px; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 0 50px rgba(241, 196, 15, 0.2)); }
-        .roulette-wheel { width: 100%; height: 100%; border-radius: 50%; border: 10px solid #2c3e50; box-shadow: 0 0 0 5px var(--gold); position: relative; overflow: hidden; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); }
-        
-        /* Wanted Poster */
-        .wanted-paper { background: #f3e6c7; padding: 20px; border: 6px solid #4e342e; transform: rotate(-2deg); position: relative; width: 320px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .wanted-title { font-family: 'Times New Roman', serif; font-weight: 900; font-size: 3.5rem; color: #3e2723; margin: 0; letter-spacing: 5px; line-height: 1; text-align: center; }
-        .wanted-name { font-family: 'Times New Roman', serif; font-size: 2rem; font-weight: 900; color: #3e2723; text-transform: uppercase; margin-top: 15px; text-align: center; line-height: 1; }
-        
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; top: 30px; font-weight: 800; opacity: 0; transition: 0.3s; box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4); transform: translateY(-20px); }
-        #toast.show { visibility: visible; opacity: 1; top: 50px; transform: translateY(0); }
-        
-        /* Background Waves */
-        .ocean { height: 120px; width: 100%; position: absolute; bottom: 0; left: 0; z-index: -1; overflow: hidden; opacity: 0.6; }
-        .wave { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 198'%3E%3Cpath fill='%233742fa' d='M1600 198H0V0h0c266.7 0 266.7 42 533.3 42S800 0 1066.7 0 1333.3 42 1600 42z'/%3E%3C/svg%3E") repeat-x; position: absolute; width: 6400px; height: 198px; bottom: -60px; animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite; }
+        .card-icon { font-size: 4rem; margin-bottom: 15px; } .card-name { font-size: 2rem; font-weight: 900; color: white; margin: 0; text-transform: uppercase; } .card-hint { color: var(--red); font-size: 0.8rem; font-weight: 800; margin-top: 15px; }
+        .voting-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .vote-card { background: #252f38; border-radius: 10px; padding: 20px 5px; text-align: center; font-weight: 700; cursor: pointer; color: white; border: 2px solid transparent; position: relative; }
+        .vote-card.selected { border-color: var(--gold); background: #2f3640; }
+        .vote-badge { position: absolute; top: -8px; right: -8px; background: var(--red); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold; border: 2px solid #1e272e; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 5; opacity: 0; transform: scale(0); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .vote-badge.visible { opacity: 1; transform: scale(1); }
+        .reveal-box { background: #1e272e; border-radius: 15px; padding: 20px; text-align: center; border: 1px dashed var(--border); margin-top: 20px; }
+        .secret-name { color: var(--gold); font-size: 2rem; font-weight: 900; display: none; margin: 10px 0; }
+        .btn-reveal { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #1e272e; width: 100%; max-width: 350px; padding: 30px; border-radius: 20px; text-align: center; border: 1px solid var(--border); }
+        .role-emoji { font-size: 5rem; display: block; margin-bottom: 10px; } .role-title { font-size: 2.2rem; font-weight: 900; margin: 0; text-transform: uppercase; } .role-desc { margin: 15px 0 20px; color: #bdc3c7; line-height: 1.4; }
+        .impostor { color: var(--red); } .crew { color: var(--blue); } .win { color: #2ecc71; } .draw { color: var(--gold); }
+        .btn-close { background: #0b1015; color: white; padding: 12px 30px; border-radius: 50px; border: 1px solid #555; font-weight: bold; cursor: pointer; margin-top: 15px;}
+        .wanted-paper { background: #f1eacc; padding: 15px; border: 4px solid #5a4033; transform: rotate(-2deg); position: relative; width: 300px; } .wanted-title { font-family: 'Times New Roman', serif; font-weight: 900; font-size: 3rem; color: #3e2723; margin: 0; letter-spacing: 5px; line-height: 1; text-align: center; } .wanted-sub { font-family: 'Times New Roman', serif; font-size: 0.9rem; color: #3e2723; margin-bottom: 10px; font-weight: bold; text-align: left; margin-left: 15px; } .wanted-img-box { width: 100%; height: 220px; background: #888; border: 3px solid #3e2723; display: flex; align-items: center; justify-content: center; overflow: hidden; } #charImage { width: 100%; height: 100%; object-fit: cover; display: none; } .wanted-name { font-family: 'Times New Roman', serif; font-size: 1.8rem; font-weight: 900; color: #3e2723; text-transform: uppercase; margin-top: 15px; text-align: center; } .wanted-value { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; font-family: 'Times New Roman'; font-weight: bold; font-size: 1.2rem; color: #3e2723; } .close-x { position: absolute; top: -15px; right: -15px; background: var(--red); color: white; width: 35px; height: 35px; border-radius: 50%; line-height: 35px; text-align: center; font-weight: bold; border: 2px solid white; cursor: pointer; } .loader { border: 4px solid #ccc; border-top: 4px solid var(--red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .timer-box { font-size: 1.5rem; font-weight: bold; color: var(--gold); border: 1px solid var(--gold); border-radius: 10px; padding: 5px 15px; margin-bottom: 10px; display: inline-block; background: #000; }
+        .event-box { margin-bottom: 15px; background: rgba(55, 66, 250, 0.2); border: 1px solid var(--blue); padding: 10px; border-radius: 10px; color: #fff; font-size: 0.9rem; display: none; animation: fadeIn 0.5s; }
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--red); color: #fff; text-align: center; border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; top: 30px; font-weight: bold; opacity: 0; transition: 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; top: 50px; }
+        .ocean { height: 100px; width: 100%; position: absolute; bottom: 0; left: 0; z-index: -1; overflow: hidden; }
+        .wave { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 198'%3E%3Cpath fill='%232c3e50' d='M1600 198H0V0h0c266.7 0 266.7 42 533.3 42S800 0 1066.7 0 1333.3 42 1600 42z'/%3E%3C/svg%3E") repeat-x; position: absolute; width: 6400px; height: 198px; bottom: -60px; opacity: 0.3; animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite; transform: translate3d(0, 0, 0); }
         .wave:nth-of-type(2) { bottom: -80px; opacity: 0.5; animation: wave 10s -1.25s infinite, swell 7s -1.25s infinite; }
         @keyframes wave { 0% { margin-left: 0; } 100% { margin-left: -1600px; } }
     </style>
@@ -253,7 +223,8 @@
             <span>CHAT DE NAKAMAS</span>
             <span style="cursor:pointer;" onclick="toggleChat()">▼</span>
         </div>
-        <div id="chat-messages" class="chat-messages"></div>
+        <div id="chat-messages" class="chat-messages">
+            </div>
         <div class="chat-input-area">
             <div id="reply-context" class="reply-context" onclick="cancelReply()">
                 <span>Respondiendo a: ...</span>
@@ -273,12 +244,12 @@
 
     <div id="setupScreen" class="container">
         <div class="setup-left">
-            <h2>UNIRSE / CREAR</h2>
+            <h2 style="color:var(--gold); margin-top:0;">UNIRSE / CREAR</h2>
             <div class="input-group">
                 <label>1. CLAVE DE LA SALA</label>
                 <input type="text" id="seedInput" placeholder="EJ: WANO" autocomplete="off">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="margin-top:15px;">
                 <label>2. TU NOMBRE (OBLIGATORIO)</label>
                 <input type="text" id="myPlayerName" placeholder="TU NOMBRE PIRATA" autocomplete="off">
                 <div id="savedNameBox" class="user-saved-box">
@@ -289,19 +260,18 @@
             <button class="btn-main" style="margin-top:20px;" onclick="unirseSala()">UNIRSE A LA SALA 🏴‍☠️</button>
         </div>
         <div class="setup-right">
-            <h3 style="color:var(--text-muted); margin:0 0 15px 0; font-size:0.8rem; font-weight:900; letter-spacing:1px;">SALAS ACTIVAS</h3>
-            <div id="activeRooms" class="room-list-box"><div style="color:rgba(255,255,255,0.3); font-size:0.9rem; text-align:center; padding:20px;">Buscando barcos cercanos...</div></div>
+            <h3 style="color:var(--text-muted); margin:0 0 10px 0; font-size:0.9rem;">SALAS ACTIVAS</h3>
+            <div id="activeRooms" class="room-list-box"><div style="color:#555; font-size:0.8rem; text-align:center;">Buscando salas...</div></div>
         </div>
     </div>
 
     <div id="lobbyScreen" class="container">
-        <h2 style="margin:0; text-align:center;">SALA: <span id="lobbyRoomName" style="color:white;"></span></h2>
-        <div style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Esperando a la tripulación...</div>
-        
+        <h2 style="color:var(--gold); margin:0; text-align:center;">SALA: <span id="lobbyRoomName"></span></h2>
+        <div style="text-align:center; color:#aaa; font-size:0.8rem; margin-bottom:15px;">Esperando a la tripulación...</div>
         <ul id="onlinePlayerList" class="player-list"></ul>
-        <div style="text-align:center; margin-top:10px; color:var(--text-muted); font-size:0.8rem;"><span id="onlineCount">0</span> Nakamas conectados</div>
+        <div style="text-align:center; margin-top:10px; color:var(--text-muted);"><span id="onlineCount">0</span> Nakamas conectados</div>
         
-        <div id="adminSection" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+        <div id="adminSection" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:15px;">
             <label style="color:var(--blue); font-size:0.9rem;">MODO DE JUEGO:</label>
             <select id="gameModeSelect">
                 <option value="CLASSIC">⚓ CLÁSICO</option>
@@ -310,15 +280,15 @@
             </select>
         </div>
 
-        <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:900; margin-top:15px; font-size:0.9rem; letter-spacing:0.5px;">⚠️ HABRÁ 1 IMPOSTOR</div>
+        <div id="impostorInfo" style="text-align:center; color:var(--red); font-weight:bold; margin-top:15px; font-size:0.9rem;">⚠️ HABRÁ 1 IMPOSTOR</div>
 
         <button id="btnZarpar" class="btn-main disabled" style="margin-top:20px;" onclick="comenzarPartida()">ESPERANDO AL CAPITÁN... ⏳</button>
-        <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ ELIMINAR SALA</button>
+        <button id="btnClean" class="btn-clean" style="display:none;" onclick="limpiarSala()">🗑️ ELIMINAR SALA (BORRAR TODO)</button>
         <button class="btn-blue" onclick="copiarLink()">🔗 COPIAR ENLACE</button>
     </div>
 
     <div id="gameScreen" class="container">
-        <div class="room-tag" id="roomInfo" style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:var(--blue); padding:8px 20px; border-radius:20px; font-weight:900; font-size:0.8rem; box-shadow:0 5px 15px rgba(55, 66, 250, 0.4);">SALA: ???</div>
+        <div class="room-tag" id="roomInfo" style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); background:var(--blue); padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.8rem; box-shadow:0 5px 10px rgba(0,0,0,0.3);">SALA: ???</div>
         <div id="gameTimer" class="timer-box" style="margin-top:10px;">03:00</div>
         <div id="eventDisplay" class="event-box"></div>
         <div class="card-wrapper">
@@ -334,7 +304,7 @@
     <div id="votingScreen" class="container">
         <div style="text-align: center; margin-bottom: 20px;">
             <h2 style="color:var(--red); margin:0;">VOTACIÓN</h2>
-            <p id="votingStatus" style="color:var(--text-muted); font-size:0.9rem;">Elige a quién expulsar por la borda</p>
+            <p id="votingStatus" style="color:#aaa; font-size:0.8rem;">Elige a quién expulsar por la borda</p>
         </div>
         <div class="voting-grid" id="votingGrid"></div>
         <div class="reveal-box">
@@ -351,7 +321,7 @@
             <h2 id="modalTitle" class="role-title"></h2>
             <div id="modalDesc" class="role-desc"></div>
             <div id="modalImageContainer"></div>
-            <div id="modalButtons" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;"></div>
+            <div id="modalButtons" style="margin-top:15px; display:flex; flex-direction:column; gap:10px;"></div>
         </div>
     </div>
 
@@ -365,8 +335,6 @@
             <div class="wanted-value">฿ 500,000,000-</div>
         </div>
     </div>
-    
-    <div class="ocean"><div class="wave"></div><div class="wave"></div></div>
 
     <script>
         const personajes = ["Luffy", "Zoro", "Nami", "Usopp", "Sanji", "Chopper", "Robin", "Franky", "Brook", "Jinbe", "Zeus", "Shanks", "Teach", "Buggy", "Shirohige", "Kaido", "Big Mom", "Luffy Gear 5", "Roger", "Rayleigh", "Oden", "Xebec", "Shiki", "Fisher Tiger", "Noland", "Calgara", "Akainu", "Kizaru", "Aokiji", "Fujitora", "Ryokugyu", "Sengoku", "Garp", "Tsuru", "Kong", "Smoker", "Tashigi", "Koby", "Helmeppo", "Hina", "Sentomaru", "X Drake", "Prince Grus", "Hibari", "Mihawk", "Crocodile", "Doflamingo", "Kuma", "Hancock", "Moria", "Law", "Weevil", "Kid", "Killer", "Bege", "Bonney", "Hawkins", "Apoo", "Urouge", "Imu", "Saturn", "Ju Peter", "Warcury", "Nusjuro", "Mars", "Garling", "Lucci", "Kaku", "Stussy", "Spandam", "Magellan", "Hannyabal", "Shiryu", "Sadi", "Yamato", "Momonosuke", "Kinemon", "Raizo", "Denjiro", "Kiku", "Kawamatsu", "Ashura", "Inuarashi", "Nekomamushi", "Hiyori", "Orochi", "Kanjuro", "Marco", "Ace", "Jozu", "Vista", "Izo", "Katakuri", "Perospero", "Cracker", "Smoothie", "Pudding", "King", "Queen", "Jack", "Ulti", "Page One", "Black Maria", "Who's Who", "Sasaki", "Benn Beckman", "Yasopp", "Lucky Roux", "Burgess", "Van Augur", "Doc Q", "Laffitte", "Catarina Devon", "Vasco Shot", "Avalo Pizarro", "Sanjuan Wolf", "Arlong", "Krieg", "Kuro", "Wapol", "Enel", "Foxy", "Hody Jones", "Caesar", "Monet", "Vergo", "Diamante", "Pica", "Trebol", "Sugar", "Senor Pink", "Bartolomeo", "Cavendish", "Dragon", "Sabo", "Koala", "Ivankov", "Inazuma", "Karasu", "Belo Betty", "Morley", "Lindbergh", "Ginny", "Vegapunk", "Shaka", "Lilith", "Edison", "Pythagoras", "Atlas", "York", "Vivi", "Karoo", "Carrot", "Pedro", "Wanda", "Zunesha", "Laboon", "Shirahoshi", "Neptune", "Kyros", "Rebecca", "Bellamy", "Bon Clay", "Kureha", "Hiriluk", "Zeff", "Dadan", "Makino", "Morgans", "Perona", "Hatchan", "Camie", "Duval", "Shakky", "Wyper", "Iceburg", "Paulie", "Kokoro", "Chimney"];
@@ -374,15 +342,19 @@
         let miNombre = "", seedActual = "", gameSeed = "", jugadores = [], pollingInterval = null;
         let miRol = "", personajePartida = "", soyLider = false, partidaIniciadaLocal = false;
         let heVotado = false, timerInterval = null, roulettePlayed = false;
+        
+        // Chat vars
         let chatOpen = false, currentReplyTo = null, lastMsgId = 0, chatInterval = null;
 
         window.onload = () => { 
             setTimeout(() => { 
                 const l=document.getElementById('intro-loader'); 
+                // ACTIVAMOS LA CLASE QUE HACE EL EFECTO ZOOM AL MENÚ
                 document.body.classList.add('boom-ready');
                 l.style.opacity = '0';
                 setTimeout(()=>l.style.display='none',200); 
-            }, 2200);
+            }, 2200); // Sincronizado con el final de la animación BOOM
+            
             cargarSalas(); setInterval(cargarSalas, 5000); cargarNombreGuardado(); 
         };
 
@@ -408,6 +380,7 @@
 
         function renderMessages(msgs) {
             const container = document.getElementById('chat-messages');
+            let newCount = 0;
             const newest = msgs.length > 0 ? msgs[msgs.length-1].id : 0;
             if(newest > lastMsgId) {
                 container.innerHTML = '';
@@ -415,7 +388,10 @@
                     const isMe = m.player_name === miNombre;
                     const div = document.createElement('div');
                     div.className = `msg ${isMe ? 'msg-me' : 'msg-other'}`;
-                    let replyHTML = m.reply_to ? `<div class="msg-reply-ref">↪ ${m.reply_to}</div>` : '';
+                    
+                    let replyHTML = '';
+                    if(m.reply_to) replyHTML = `<div class="msg-reply-ref">↪ ${m.reply_to}</div>`;
+                    
                     div.innerHTML = `${replyHTML}<span class="msg-author">${isMe ? 'Tú' : m.player_name}</span>${m.content}`;
                     div.onclick = () => setReply(m.content, m.player_name);
                     container.appendChild(div);
@@ -423,7 +399,8 @@
                 container.scrollTop = container.scrollHeight;
                 if(!chatOpen) {
                     const diff = msgs.filter(m => m.id > lastMsgId).length;
-                    if(diff > 0) { document.getElementById('unread-badge').innerText = diff > 9 ? '9+' : diff; document.getElementById('unread-badge').classList.add('visible'); }
+                    const badge = document.getElementById('unread-badge');
+                    if(diff > 0) { badge.innerText = diff > 9 ? '9+' : diff; badge.classList.add('visible'); }
                 }
                 lastMsgId = newest;
             }
@@ -446,16 +423,18 @@
             const text = input.value.trim();
             if(!text || !seedActual) return;
             input.value = '';
+            
             try {
                 await fetch('/api', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ action: 'send_message', room: seedActual, player: miNombre, content: text, replyTo: currentReplyTo }) });
-                cancelReply(); pollChat();
+                cancelReply();
+                pollChat();
             } catch(e) {}
         }
 
         // --- CORE LOGIC ---
         function cargarNombreGuardado() { const s = localStorage.getItem('nakama_name'); if(s) { miNombre = s; document.getElementById('myPlayerName').value = s; document.getElementById('myPlayerName').style.display = 'none'; document.getElementById('savedNameBox').style.display = 'flex'; document.getElementById('displaySavedName').innerText = `HOLA, ${s}`; } else { document.getElementById('myPlayerName').style.display = 'block'; document.getElementById('savedNameBox').style.display = 'none'; } }
         function cambiarNombre() { localStorage.removeItem('nakama_name'); miNombre = ""; document.getElementById('myPlayerName').value = ""; document.getElementById('myPlayerName').style.display = 'block'; document.getElementById('savedNameBox').style.display = 'none'; document.getElementById('myPlayerName').focus(); }
-        async function cargarSalas() { if(document.getElementById('setupScreen').style.display==='none') return; try{const r=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list'})});if(r.ok){const d=await r.json();const c=document.getElementById('activeRooms');if(d.length===0){c.innerHTML='<div style="color:rgba(255,255,255,0.3); font-size:0.9rem; text-align:center; padding:20px;">No hay salas activas...<br>¡Crea la primera!</div>';return;}c.innerHTML='';d.forEach(x=>{const m=Math.max(0,Math.floor(30-(new Date()-new Date(x.created_at))/1000/60));const div=document.createElement('div');div.className='room-item';div.innerHTML=`<div><div class="room-code">${x.room_code}</div><div class="room-count">👥 ${x.count} Piratas</div><div class="room-time">⏳ Expira en: ${m} min</div></div><div class="room-join-txt">ENTRAR ➡️</div>`;div.onclick=()=>unirseDesdeLista(x.room_code);c.appendChild(div);});}}catch(e){} }
+        async function cargarSalas() { if(document.getElementById('setupScreen').style.display==='none') return; try{const r=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'list'})});if(r.ok){const d=await r.json();const c=document.getElementById('activeRooms');if(d.length===0){c.innerHTML='<div style="color:#555;font-size:0.8rem;text-align:center;">No hay salas activas.<br>¡Crea una!</div>';return;}c.innerHTML='';d.forEach(x=>{const m=Math.max(0,Math.floor(30-(new Date()-new Date(x.created_at))/1000/60));const div=document.createElement('div');div.className='room-item';div.innerHTML=`<div><div class="room-code">${x.room_code}</div><div class="room-count">👥 ${x.count} Piratas</div><div class="room-time">⏳ Expira en: ${m} min</div></div><div class="room-join-txt">ENTRAR ➡️</div>`;div.onclick=()=>unirseDesdeLista(x.room_code);c.appendChild(div);});}}catch(e){} }
         function unirseDesdeLista(c){let n=document.getElementById('myPlayerName').value.trim().toUpperCase();const s=localStorage.getItem('nakama_name');if(s)n=s;if(!n){showToast("⚠️ ¡PRIMERO PON TU NOMBRE!");document.getElementById('myPlayerName').focus();return;}document.getElementById('seedInput').value=c;unirseSala();}
         async function unirseSala(){seedActual=document.getElementById('seedInput').value.trim().toUpperCase();let n=document.getElementById('myPlayerName').value.trim().toUpperCase();const s=localStorage.getItem('nakama_name');miNombre=s?s:n;if(!miNombre||!seedActual){showToast("¡Datos incompletos!");return;}partidaIniciadaLocal=false;heVotado=false;roulettePlayed=false;try{const r=await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join',room:seedActual,player:miNombre})});if(r.ok){localStorage.setItem('nakama_name',miNombre);irALobby();}else if(r.status===409)showToast("⛔ NOMBRE OCUPADO");else showToast("Error al conectar");}catch(e){showToast("Error fatal");}}
         function irALobby(){document.getElementById('setupScreen').style.display='none';document.getElementById('votingScreen').style.display='none';document.getElementById('gameScreen').style.display='none';document.getElementById('mainHeader').style.display='block';document.getElementById('lobbyScreen').style.display='flex';document.getElementById('lobbyRoomName').innerText=seedActual;if(pollingInterval)clearInterval(pollingInterval);actualizarLista();pollingInterval=setInterval(actualizarLista,2000);document.getElementById('chat-btn').style.display='flex';pollChat();}
@@ -469,18 +448,33 @@
                     jugadores=d.players;
                     soyLider=(d.leader===miNombre);
                     gameSeed=d.seed;
+                    
                     if(d.started&&!partidaIniciadaLocal){partidaIniciadaLocal=true;iniciarJuegoCliente();}
                     else if(!d.started&&partidaIniciadaLocal){location.reload();}
                     else if(!partidaIniciadaLocal){renderizarLista(d.leader);}
+                    
                     if(d.ejected){
                         gestionarResultado(d);
                         if(d.votes) actualizarVotos(d.votes);
                         document.getElementById('btnShowChar').style.display='inline-block';
                     }
+                    
+                    // --- NUEVA LÓGICA DE CONTADOR DE VOTOS ---
                     let totalVotos = 0;
-                    if(d.votes) { totalVotos = Object.values(d.votes).reduce((a, b) => a + b, 0); actualizarVotos(d.votes); }
-                    if(d.hasVoted){ heVotado=true; document.getElementById('votingStatus').innerText = `ESPERANDO... (VOTOS: ${totalVotos}/${jugadores.length})`; } 
-                    else { if(document.getElementById('votingScreen').style.display === 'flex') document.getElementById('votingStatus').innerText = `VOTOS REALIZADOS: ${totalVotos}/${jugadores.length}`; }
+                    if(d.votes) {
+                        totalVotos = Object.values(d.votes).reduce((a, b) => a + b, 0);
+                        actualizarVotos(d.votes);
+                    }
+                    
+                    if(d.hasVoted){
+                        heVotado=true;
+                        document.getElementById('votingStatus').innerText = `ESPERANDO... (VOTOS: ${totalVotos}/${jugadores.length})`;
+                    } else {
+                        // Si estamos en pantalla de votación y aún no voto
+                        if(document.getElementById('votingScreen').style.display === 'flex') {
+                             document.getElementById('votingStatus').innerText = `VOTOS REALIZADOS: ${totalVotos}/${jugadores.length}`;
+                        }
+                    }
                 }
             }catch(e){console.error(e);}
         }
@@ -500,9 +494,18 @@
         
         async function enviarVoto(t,el){
             if(heVotado) return;
+            // --- NUEVA CONFIRMACIÓN DE VOTO ---
             if(!confirm(`¿Estás seguro de votar a ${t}?`)) return;
-            const b=document.querySelectorAll('.vote-card'); b.forEach(x=>x.style.opacity='0.5'); el.style.opacity='1'; el.style.borderColor='var(--gold)';
-            try{await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'vote',room:seedActual,player:miNombre,target:t})});heVotado=true;document.getElementById('votingStatus').innerText="VOTO ENVIADO...";}catch(e){showToast("Error al votar");}
+
+            const b=document.querySelectorAll('.vote-card');
+            b.forEach(x=>x.style.opacity='0.5');
+            el.style.opacity='1';
+            el.style.borderColor='var(--gold)';
+            try{
+                await fetch('/api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'vote',room:seedActual,player:miNombre,target:t})});
+                heVotado=true;
+                document.getElementById('votingStatus').innerText="VOTO ENVIADO...";
+            }catch(e){showToast("Error al votar");}
         }
 
         function mostrarResultadoVotacion(e){if(document.getElementById('modalOverlay').style.display==='flex'&&document.getElementById('modalTitle').className.includes('win'))return;const p=gameSeed.split('|');const m=p[2]||'CLASSIC';const s=[...jugadores].sort();const re=rolesPartida[s.indexOf(e)];const si=(miRol==="___IMPOSTOR___");let hg=false;if(m==='REVERSE'){if(re!=="___IMPOSTOR___")hg=true;}else{if(re==="___IMPOSTOR___")hg=true;}const i=document.getElementById('modalIcon'),t=document.getElementById('modalTitle'),d=document.getElementById('modalDesc');document.getElementById('modalImageContainer').innerHTML='';let hd="";if(hg){if(si){i.innerText="💀";t.innerText="DERROTA";t.className="role-title impostor";hd=`Te han descubierto.<br>Has sido expulsado.`;}else{i.innerText="🎉";t.innerText="¡VICTORIA!";t.className="role-title win";hd=`¡Bien hecho!<br>El Impostor <span style="color:var(--red);font-weight:bold;">${e}</span> ha sido eliminado.`;}}else{if(si){i.innerText="🎉";t.innerText="¡VICTORIA!";t.className="role-title win";hd=`¡Les has engañado!<br>Han expulsado a un inocente: ${e}.`;}else{i.innerText="💀";t.innerText="DERROTA";t.className="role-title impostor";hd=`Os habéis equivocado...<br><span style="color:white;font-weight:bold;">${e}</span> era inocente.`;}}d.innerHTML=hd;let b=`<button class="btn-photo" style="margin-bottom:10px;width:100%;justify-content:center;" onclick="abrirFotoModal('${personajePartida}')">📷 VER PERSONAJE SECRETO</button>`;if(soyLider)b+='<button class="btn-main" onclick="reiniciarPartida()">🔄 JUGAR OTRA VEZ</button>';else b+='<p style="font-size:0.8rem;color:#aaa;">Esperando al capitán para reiniciar...</p>';document.getElementById('modalButtons').innerHTML=b;document.getElementById('modalOverlay').style.display='flex';}
@@ -516,18 +519,40 @@
         function resetCardVisual(){const c=document.getElementById('myCard');c.classList.remove('disabled');document.querySelector('.card-icon').innerText="👆";document.querySelector('.card-name').innerText=miNombre;document.querySelector('.card-hint').innerText="TOCA PARA VER TU ROL";}
         
         async function abrirFotoModal(n){
-            const m=document.getElementById('imgModal'); const i=document.getElementById('charImage'); const l=document.getElementById('imgLoader'); const w=document.getElementById('wantedName');
-            m.style.display='flex'; i.style.display='none'; l.style.display='block';
-            let dn=n.split('(')[0].trim(); w.innerText=dn;
+            const m=document.getElementById('imgModal');
+            const i=document.getElementById('charImage');
+            const l=document.getElementById('imgLoader');
+            const w=document.getElementById('wantedName');
+            m.style.display='flex';
+            i.style.display='none';
+            l.style.display='block';
+            
+            let dn=n.split('(')[0].trim();
+            w.innerText=dn;
+            
+            // --- FIX IMÁGENES: AÑADIMOS "One Piece" A LA BÚSQUEDA ---
             const searchTerm = dn + " One Piece"; 
+
             const q=`query ($search: String) { Page(perPage: 5) { characters(search: $search) { name { full } image { large } media(sort: POPULARITY_DESC) { nodes { title { romaji english } } } } } }`;
             try{
                 const r=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,variables:{search:searchTerm}})});
-                const j=await r.json(); const c=j.data.Page.characters;
+                const j=await r.json();
+                const c=j.data.Page.characters;
+                // Filtro mejorado
                 let b=c.find(x=>x.media.nodes.some(y=>(y.title.romaji||"").includes("One Piece")||(y.title.english||"").includes("One Piece")))?.image.large;
                 if(!b&&c.length>0)b=c[0].image.large;
-                if(b){ i.src=b; i.onload=()=>{l.style.display='none';i.style.display='block';}; } else { throw new Error(); }
-            }catch{ l.style.display='none'; i.src = 'jolly.png'; i.style.display = 'block'; showToast("Imagen no disponible"); }
+                
+                if(b){
+                    i.src=b;
+                    i.onload=()=>{l.style.display='none';i.style.display='block';};
+                }else{throw new Error();}
+            }catch{
+                l.style.display='none';
+                // En vez de abrir Google, mostramos el logo como fallback dentro de la web
+                i.src = 'jolly.png'; // Asegúrate de que jolly.png existe
+                i.style.display = 'block';
+                showToast("Imagen no disponible");
+            }
         }
     </script>
 </body>
